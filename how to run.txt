@@ -1,0 +1,41 @@
+in the code files there are variables that can be edited which are 
+numdrones for the number of drones/vehicles 
+numtrackp for number of trackpoints of the path for each drone/vehicle
+also there is an obstacle number variable (obsnum) which is randomie
+dsafe is the safety distance between the drone/vehicle and the obstacles
+the output array is the output of the optimization is done on the problem 
+
+Methods made:
+
+1) createobs()
+
+this method creates obsnum random obstacle locations in our grid
+
+2) createarray()
+
+which creates an array with all the drones/vehicles start and endpoints and their trackpoints [sp1,tps1,ep1,sp2,tps2,ep2, . . . . . , spn,tpsn,epn]
+
+3)func1()
+
+it is the first objective function which is the summation of all the distances between the track points of each drone/vehicle
+
+4)func2() is the danger objective function
+
+5)contraint1() which is the first constraint function of the horizontal turning angle
+
+6) constraint2() which is the constraint of the vertical turning angle
+NEW
+
+7) constraint3() which is the object collision constraint
+
+
+this is an example of the prints of the code
+
+info [(0, 0, 0), (10, 9, 2), (7, 5, 1), (10, 10, 10), (0, 1, 0), (5, 2, 8), (3, 7, 8), (10, 9, 10)]
+dist [29.424295317091836, 22.421832222910393]
+constraint1 False
+constraint2 True
+constraint3 True
+danger [0.2261685712813658, 0.41251247373019506]
+Obs [(5, 6, 10), (5, 3, 1), (1, 0, 7), (1, 4, 1), (4, 6, 8), (9, 7, 10), (7, 2, 0)]
+Output [(10, 9, 2), (7, 5, 1), (5, 2, 8), (3, 7, 8)]
