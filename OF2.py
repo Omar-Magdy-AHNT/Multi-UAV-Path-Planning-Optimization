@@ -9,7 +9,7 @@ def func2():
             y = Droneinfo[j+(i*4)][1]
             z = Droneinfo[j+(i*4)][2]
             b = 0
-            for k in range(obstnum):
+            for k in range(len(obstlist)):
                 x1 = obstlist[k][0]
                 y1 = obstlist[k][1]
                 z1 = obstlist[k][2]
