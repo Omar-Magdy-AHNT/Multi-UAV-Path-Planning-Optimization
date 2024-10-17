@@ -2,8 +2,6 @@ import numpy
 from Data import *
 
 def Horz_check(p1,p2):
-
-
     x = p1[0]
     y = p1[1]
     z = p1[2]

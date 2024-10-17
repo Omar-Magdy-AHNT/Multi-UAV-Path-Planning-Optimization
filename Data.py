@@ -5,9 +5,9 @@ import math
 numdrones = 2   #depends on the number of drones
 distbttrackp = 2 #depends on the controller accuracy 
 gridsize = 100
+mpd = 2
 numtrackp = math.ceil((((((10-0)**2)+((10-0)**2)+((10-0)**2))**0.5)/distbttrackp) + 1)
 obstlist = []
-createobs()
 distDrone = []
 dsafe = 1
 amax = 75 *numpy.pi/180
