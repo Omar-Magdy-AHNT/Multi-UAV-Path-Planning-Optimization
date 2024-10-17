@@ -138,4 +138,3 @@ func2()
 print ("danger", danger)
 print ("Obs", obstlist)
 print ("Output", Output)
-
