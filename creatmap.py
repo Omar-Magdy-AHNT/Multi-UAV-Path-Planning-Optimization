@@ -54,20 +54,21 @@ def createmap():
                 continue
 
             # Check for horizontal constraints if applicable
-            if len(Droneinfo) > 0 and not Horz_check(Droneinfo[-1], (x, y, z)):
+            if len(Droneinfo) > (0 +(numtrackp+2)*i)  and not Horz_check(Droneinfo[-1], (x, y, z)):
                 print("Horizontal check failed, skipping.")
                 continue
 
             # Check for vertical constraints if applicable
-            if len(Droneinfo) > 1 and not vertical_check(Droneinfo[-2], Droneinfo[-1], (x, y, z)):
+            if len(Droneinfo) > (1 +(numtrackp+2)*i) and not vertical_check(Droneinfo[-2], Droneinfo[-1], (x, y, z)):
                 print("Vertical check failed, skipping.")
                 continue
-
+            if len(Droneinfo) > (1 +(numtrackp+2)*i) and not Trackpointlinevalid(Droneinfo[-1], (x, y, z)):
+                print("Vertical check failed, skipping.")
+                continue
             # If all checks pass, add the point
             Droneinfo.append((x, y, z))
             Output.append((x, y, z))
             added_points += 1  # Increment the count of successfully added track points
-        
         Droneinfo.append(endpt)  # Append the endpoint after adding all track points
 
 
