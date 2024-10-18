@@ -7,9 +7,12 @@ from Data import *
 from OF1 import *
 from OF2 import *
 import math
-import numpy
 from creatmap import *
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+import numpy as np
 
+createobs(gridsize)
 """ 
 def neighbor_solution():
     #print('Droneinfo:', Droneinfo)
@@ -92,14 +95,8 @@ while T0 > Tf:
 
     print('Best solution:', best_solution) """
 
-T0 =100
-Tf = 1
-imax = 3
-alpha = 0.95
-createmap()
-createobs(gridsize)
 
-def objective(Droneinfo):
+def objective():
     distDrone.clear()
     danger.clear()
     func1()
@@ -110,40 +107,114 @@ def objective(Droneinfo):
     return obj
 
 def newsolution():
-    start_idx = (numtrackp + 2) * i
-    end_idx = (numtrackp + 2) * (i + 1) - 1
     for i in range (numdrones):
         flag = False
+        start_idx = (numtrackp) * i
+        end_idx = (numtrackp) * (i + 1) - 1
+        f = random.randint(start_idx, end_idx-1)
+        g = Droneinfo.index(Output[f])
         while flag == False:
-            f = random.randint(start_idx, end_idx)
-            g = Droneinfo.index(Output[f])
             x,y,z = Output[f]
-            x = x + random.choice([-3,-2,-1, 1,2,3])
-            y = y + random.choice([-3,-2,-1, 1,2,3])
-            z = z + random.choice([-3,-2,-1, 1,2,3])
+            xn = x + random.choice([-5,-4,-3,-2,-1,1,2,3,4,5])
+            yn = y + random.choice([-5,-4,-3,-2,-1,1,2,3,4,5])
+            zn = z + random.choice([-5,-4,-3,-2,-1,1,2,3,4,5])
             # Check if the generated point is in the obstacle list
-            if (x, y, z) in obstlist:
-                print("Point is an obstacle, skipping.")
+            if (xn, yn, zn) in obstlist:
+                print("Point is an obstacle SA, skipping.")
                 continue
             
             # Check if the generated point is already in Droneinfo
-            if (x, y, z) in Droneinfo:
-                print("Point is already in Droneinfo, skipping.")
+            if (xn, yn, zn) in Droneinfo:
+                print("Point is already in Droneinfo SA, skipping.")
                 continue
 
             # Check for horizontal constraints if applicable
             if len(Droneinfo) > (0 +(numtrackp+2)*i)  and not Horz_check(Droneinfo[-1], (x, y, z)):
-                print("Horizontal check failed, skipping.")
+                print("Horizontal check failed SA, skipping.")
                 continue
 
             # Check for vertical constraints if applicable
             if len(Droneinfo) > (1 +(numtrackp+2)*i) and not vertical_check(Droneinfo[-2], Droneinfo[-1], (x, y, z)):
-                print("Vertical check failed, skipping.")
+                print("Vertical check failed SA, skipping.")
                 continue
             if len(Droneinfo) > (1 +(numtrackp+2)*i) and not Trackpointlinevalid(Droneinfo[-1], (x, y, z)):
-                print("Vertical check failed, skipping.")
+                print("Line check failed SA, skipping.")
                 continue
             flag = True
-        Output[f] = (x,y,z)
-        Droneinfo[g] = (x,y,z)
+        Output[f] = (xn,yn,zn)
+        Droneinfo[g] = (xn,yn,zn)
 
+tf = 1
+imax = 3
+alpha = 0.95
+cost = []
+
+def SA():
+    tn = 100
+    current_solution = Output
+    best_solution = current_solution
+    current_objective = objective()
+    best_objective = current_objective
+    i = 0
+    while tn > tf and i < imax:
+        newsolution()
+        new_objective = objective()
+        delta = new_objective - current_objective
+        if delta < 0:
+            current_solution = Output
+            current_objective = new_objective
+        elif random.random(0,1) < math.exp(-delta / tn) : 
+            current_solution = Output
+            current_objective = new_objective
+        i += 1
+        tn *= alpha**i
+        print('Best solution:', best_solution)
+        print('Best solution:', Droneinfo)
+        cost.append(best_objective)
+
+
+def plot_map(Droneinfo, obstlist, numdrones, numtrackp, gridsize):
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+
+    # Define a list of colors for each drone
+    colors = plt.cm.jet(np.linspace(0, 1, numdrones))
+
+    # Plot each drone's path in a different color
+    for i in range(numdrones):
+        start_index = (numtrackp + 2) * i
+        end_index = start_index + (numtrackp + 2)
+
+        # Get the track points for this drone from Droneinfo
+        drone_path = Droneinfo[start_index:end_index]
+        xs, ys, zs = zip(*drone_path)  # Unpack into separate lists for x, y, z
+
+        ax.plot(xs, ys, zs, color=colors[i], label=f'Drone {i + 1}', marker='o')
+
+    # Plot obstacles
+    if obstlist:
+        ox, oy, oz = zip(*obstlist)
+        ax.scatter(ox, oy, oz, color='red', marker='x', label='Obstacles')
+
+    # Set axis limits based on grid size
+    ax.set_xlim([0, gridsize])
+    ax.set_ylim([0, gridsize])
+    ax.set_zlim([0, gridsize])
+
+    # Set labels and title
+    ax.set_xlabel('X')
+    ax.set_ylabel('Y')
+    ax.set_zlabel('Z')
+    ax.set_title('Drone Paths with Obstacles')
+
+    plt.legend()
+    plt.show()
+
+createmap()
+#print('obstlist',obstlist)
+#print('Droneinfo',Droneinfo)
+#print('numdrones',numdrones)
+#print('numtrackp',numtrackp)
+#print('Output',Output)
+SA()
+plot_map(Droneinfo, obstlist, numdrones, numtrackp, gridsize)

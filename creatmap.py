@@ -4,15 +4,14 @@ from Const3 import *
 from Const4 import Trackpointlinevalid
 from Const5 import *
 from Data import *
-
 def createobs(gridsize):
-    base_points = [(5, 5), (15, 15), (25, 25)] 
+    base_points = [(5, 5), (7, 2)] 
     added_points = set()  # Set to keep track of added points
 
     # Create obstacles based on base points
     for base_x, base_y in base_points:
-        for x_offset in range(5): 
-            for y_offset in range(5):
+        for x_offset in range(1): 
+            for y_offset in range(1):
                 for z in range(gridsize): 
                     x = base_x + x_offset
                     y = base_y + y_offset
@@ -28,11 +27,10 @@ def createobs(gridsize):
             if point not in added_points:  # Check if the point is already added
                 obstlist.append(point)
                 added_points.add(point) 
-
 def createmap():
     for i in range(numdrones):
-        startpt = (0, i, 0)
-        endpt = (gridsize, gridsize- i, gridsize)
+        startpt = (0, i, 1)
+        endpt = (gridsize, gridsize- i, 1)
         Droneinfo.append(startpt)
         
         added_points = 0  # Count of successfully added track points
@@ -43,7 +41,7 @@ def createmap():
             z = random.randint(0, gridsize)
             print(f"Generated point: ({x}, {y}, {z})")  # Debugging line
 
-            # Check if the generated point is in the obstacle list
+                # Check if the generated point is in the obstacle list
             if (x, y, z) in obstlist:
                 print("Point is an obstacle, skipping.")
                 continue
@@ -63,7 +61,7 @@ def createmap():
                 print("Vertical check failed, skipping.")
                 continue
             if len(Droneinfo) > (1 +(numtrackp+2)*i) and not Trackpointlinevalid(Droneinfo[-1], (x, y, z)):
-                print("Vertical check failed, skipping.")
+                print("Line check failed, skipping.")
                 continue
             # If all checks pass, add the point
             Droneinfo.append((x, y, z))
