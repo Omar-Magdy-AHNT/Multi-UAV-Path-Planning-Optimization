@@ -37,7 +37,8 @@ def visualize_terrain_map(terrain_map, grid_size):
 grid_size = 10  # Adjust the grid size to balance resolution and performance
 terrain_map = load_terrain_map('terrain_map.npy')
 #visualize_terrain_map(terrain_map, grid_size)
-if terrain_map[0][0][0] == 1:
+###############GETTING START POINTS################
+""" if terrain_map[0][0][0] == 1:
     print("Obstacle detected")  
 else:
     print("No obstacle detected")
@@ -62,4 +63,43 @@ for x in range(terrain_map.shape[0]):
 if lowest_empty_point:
     print("Lowest empty point (X, Y, Z):", lowest_empty_point)
 else:
-    print("No empty points found in the terrain.")
+    print("No empty points found in the terrain.") """
+
+############GETTING END POINTS################
+# Get the shape of the terrain map get 
+x_size, y_size, z_size = terrain_map.shape
+
+# 1. Calculate mid-elevation for Z
+min_z = 0  # Assuming elevation starts from 0
+max_z = z_size - 1
+mid_elevation = (min_z + max_z) / 2
+print(f"Mid-elevation (Z): {mid_elevation}")
+
+# Convert mid_elevation to integer
+mid_elevation = int(mid_elevation)
+
+# 2. Find the maximum points in X and Y
+max_x_index = x_size - 1
+max_y_index = y_size - 1
+
+# 3. Search for the point at mid-elevation and farthest in X and Y
+suitable_points = []
+
+# Iterate over the maximum extent in X and Y to find a point above the mid-elevation
+for x in range(max_x_index + 1):
+    for y in range(max_y_index + 1):
+        # Check if there are any points at the mid-elevation or higher
+        for z in range(mid_elevation, z_size):
+            if terrain_map[x, y, z] > 0:  # Check if this is a valid terrain point
+                suitable_points.append((x, y, z))
+
+# Select the furthest point(s) that meet the criteria
+if suitable_points:
+    # Sort points by distance from the origin (0,0)
+    suitable_points.sort(key=lambda point: (point[0], point[1]), reverse=True)
+    selected_point = suitable_points[0]  # furthest point
+    print(f"Selected point (X, Y, Z): {selected_point}")
+else:
+    print("No suitable point found.")
+
+

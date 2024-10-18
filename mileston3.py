@@ -8,23 +8,9 @@ from OF1 import *
 from OF2 import *
 import math
 import numpy
+from creatmap import *
 
-T0 =100
-Tf = 1
-imax = 3
-alpha = 0.95
-createarray()
-
-def objective(Droneinfo):
-    distDrone.clear()
-    danger.clear()
-    func1()
-    func2()
-    total_distance = sum(distDrone)
-    total_danger = sum(danger)
-    obj = total_distance + 10*total_danger
-    return obj
-
+""" 
 def neighbor_solution():
     #print('Droneinfo:', Droneinfo)
     #print('Droneinfo:', Droneinfo)
@@ -104,6 +90,23 @@ while T0 > Tf:
         i += 1
     T0 *= alpha**i
 
-    print('Best solution:', best_solution)
+    print('Best solution:', best_solution) """
+
+T0 =100
+Tf = 1
+imax = 3
+alpha = 0.95
+createmap()
+createobs(gridsize)
+
+def objective(Droneinfo):
+    distDrone.clear()
+    danger.clear()
+    func1()
+    func2()
+    total_distance = sum(distDrone)
+    total_danger = sum(danger)
+    obj = total_distance + 10*total_danger
+    return obj
 
 

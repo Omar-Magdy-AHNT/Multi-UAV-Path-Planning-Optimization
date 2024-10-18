@@ -1,15 +1,10 @@
-from Data import *
-def Dist(p1,p2):
-    x = p1[0]
-    y = p1[1]
-    z = p1[2]
+from Data import maxpdist  # Importing only maxpdist to avoid circular dependency
 
-    x1 = p2[0]
-    y1 = p2[1]
-    z1 = p2[2]
+def Dist(p1, p2):
 
-    L = ((x-x1)**2 + (y-y1)**2 + (z1-z)**2)**0.5
+    x, y, z = p1
+    x1, y1, z1 = p2
 
-    if L>mpd:
-        return False    
-    return True
+    L = ((x - x1) ** 2 + (y - y1) ** 2 + (z1 - z) ** 2) ** 0.5
+
+    return L <= maxpdist
