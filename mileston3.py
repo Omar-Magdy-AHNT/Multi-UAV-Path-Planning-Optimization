@@ -57,7 +57,6 @@ def is_valid_solution(Droneinfo):
             if not PointValid(p1):
                 return False
             if i < numtrackp - 1:
-
                 p2 = Droneinfo[drone_index * (numtrackp + 2) + i + 1]
 
                 if not Trackpointlinevalid(p1, p2):
