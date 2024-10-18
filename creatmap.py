@@ -5,7 +5,7 @@ from Const4 import Trackpointlinevalid
 from Const5 import *
 from Data import *
 def createobs(gridsize):
-    base_points = [(5, 5), (7, 2)] 
+    base_points = [(5, 5), (8, 5), (7, 2)] 
     added_points = set()  # Set to keep track of added points
 
     # Create obstacles based on base points

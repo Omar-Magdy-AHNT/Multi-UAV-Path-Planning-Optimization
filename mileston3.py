@@ -129,15 +129,15 @@ def newsolution():
                 continue
 
             # Check for horizontal constraints if applicable
-            if len(Droneinfo) > (0 +(numtrackp+2)*i)  and not Horz_check(Droneinfo[-1], (x, y, z)):
+            if g > (0 +(numtrackp+2)*i)  and not Horz_check(Droneinfo[g-1], (x, y, z)):
                 print("Horizontal check failed SA, skipping.")
                 continue
 
             # Check for vertical constraints if applicable
-            if len(Droneinfo) > (1 +(numtrackp+2)*i) and not vertical_check(Droneinfo[-2], Droneinfo[-1], (x, y, z)):
+            if  g > (1 +(numtrackp+2)*i) and not vertical_check(Droneinfo[g-2], Droneinfo[g-1], (x, y, z)):
                 print("Vertical check failed SA, skipping.")
                 continue
-            if len(Droneinfo) > (1 +(numtrackp+2)*i) and not Trackpointlinevalid(Droneinfo[-1], (x, y, z)):
+            if  g > (1 +(numtrackp+2)*i) and not Trackpointlinevalid(Droneinfo[g-1], (x, y, z)):
                 print("Line check failed SA, skipping.")
                 continue
             flag = True
@@ -163,7 +163,7 @@ def SA():
         if delta < 0:
             current_solution = Output
             current_objective = new_objective
-        elif random.random(0,1) < math.exp(-delta / tn) : 
+        elif random.random() < math.exp(-delta / tn) : 
             current_solution = Output
             current_objective = new_objective
         i += 1
