@@ -109,5 +109,41 @@ def objective(Droneinfo):
     obj = total_distance + 10*total_danger
     return obj
 
+def newsolution():
+    start_idx = (numtrackp + 2) * i
+    end_idx = (numtrackp + 2) * (i + 1) - 1
+    for i in range (numdrones):
+        flag = False
+        while flag == False:
+            f = random.randint(start_idx, end_idx)
+            g = Droneinfo.index(Output[f])
+            x,y,z = Output[f]
+            x = x + random.choice([-3,-2,-1, 1,2,3])
+            y = y + random.choice([-3,-2,-1, 1,2,3])
+            z = z + random.choice([-3,-2,-1, 1,2,3])
+            # Check if the generated point is in the obstacle list
+            if (x, y, z) in obstlist:
+                print("Point is an obstacle, skipping.")
+                continue
+            
+            # Check if the generated point is already in Droneinfo
+            if (x, y, z) in Droneinfo:
+                print("Point is already in Droneinfo, skipping.")
+                continue
 
+            # Check for horizontal constraints if applicable
+            if len(Droneinfo) > (0 +(numtrackp+2)*i)  and not Horz_check(Droneinfo[-1], (x, y, z)):
+                print("Horizontal check failed, skipping.")
+                continue
+
+            # Check for vertical constraints if applicable
+            if len(Droneinfo) > (1 +(numtrackp+2)*i) and not vertical_check(Droneinfo[-2], Droneinfo[-1], (x, y, z)):
+                print("Vertical check failed, skipping.")
+                continue
+            if len(Droneinfo) > (1 +(numtrackp+2)*i) and not Trackpointlinevalid(Droneinfo[-1], (x, y, z)):
+                print("Vertical check failed, skipping.")
+                continue
+            flag = True
+        Output[f] = (x,y,z)
+        Droneinfo[g] = (x,y,z)
 
