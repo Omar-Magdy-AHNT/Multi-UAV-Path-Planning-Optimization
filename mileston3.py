@@ -14,6 +14,31 @@ import numpy as np  # Import numpy for numerical operations
 
 createobs(gridsize)  # Create obstacles in the grid
 
+def generate_possible_points(x, y, z):
+    # Define perturbation ranges
+    x_range = range(-5, 6)  # From -5 to 5
+    y_range = range(-5, 6)  # From -5 to 5
+    z_range = range(-3, 4)  # From -3 to 3
+
+    # Create a list to store all possible (xn, yn, zn) combinations
+    possible_points = []
+
+    # Generate all combinations of perturbations
+    for dx in x_range:
+        for dy in y_range:
+            for dz in z_range:
+                xn = x + dx
+                yn = y + dy
+                zn = z + dz
+                possible_points.append((xn, yn, zn))
+
+    return possible_points
+
+# Example usage:
+x, y, z = 0, 0, 0  # Your original point
+points_list = generate_possible_points(x, y, z)
+print(points_list)
+
 # Function to calculate the objective value based on distances and dangers
 def objective():
     distDrone.clear()  # Clear the distance list
@@ -35,50 +60,60 @@ def newsolution():
         end_idx = (numtrackp) * (i + 1) -1 # Calculate end index for the current drone's points (exclusive)
         f = random.randint(start_idx, end_idx)  # Randomly select an index for the drone's point
         g = Droneinfo.index(Output[f])  # Get the actual index in the Droneinfo list
-        
+        x, y, z = Output[f]  # Get current point's coordinates
+        possible_points = generate_possible_points(x, y, z)  # Generate possible points around current point
         while not flag:  # Loop until a valid new point is found
-            x, y, z = Output[f]  # Get current point's coordinates
-            xn = x + random.choice([-3, -2, -1, 0, 1, 2, 3])  # Randomly perturb x
-            yn = y + random.choice([-2, -1, 0, 1, 2])  # Randomly perturb y
-            zn = z + random.choice([-1, 0, 1])  # Randomly perturb z
+            if not possible_points:  # If no possible points left
+                print("No possible points left SA, skipping.")
+                xn,yn,zn = Output[f]  # Keep the current point
+                break  # Break out of the loop
+            xn, yn, zn = random.choice(possible_points)  # Randomly select a new point from possible points
             
             # Check if new point is within bounds
             if xn < 0 or xn > gridsize or yn < 0 or yn > gridsize or zn < 0 or zn > gridsize:
                 print("Point is out of bounds SA, skipping.")  # Debugging statement for out of bounds
+                possible_points.remove((xn, yn, zn))  # Remove the invalid point
                 continue  # Skip this iteration
             
             # Check if the generated point is in the obstacle list
             if (xn, yn, zn) in obstlist:
                 print("Point is an obstacle SA, skipping.")  # Debugging statement for obstacle
+                possible_points.remove((xn, yn, zn))  # Remove the invalid point
                 continue  # Skip this iteration
             
             # Check if the generated point is already in Droneinfo
             if (xn, yn, zn) in Droneinfo:
                 print("Point is already in Droneinfo SA, skipping.")  # Debugging statement for duplicates
+                possible_points.remove((xn, yn, zn))  # Remove the invalid point
                 continue  # Skip this iteration
 
             # Check for horizontal constraints if applicable
             if not Horz_check(Droneinfo[g - 1], (xn, yn, zn)) and not Horz_check(Droneinfo[g + 1], (xn, yn, zn)):
                 print("Horizontal check failed SA, skipping.")  # Debugging statement for horizontal check failure
+                possible_points.remove((xn, yn, zn))  # Remove the invalid point
                 continue  # Skip this iteration
 
             # Check for vertical constraints if applicable
             if g > (1 + (numtrackp + 2) * i) :
                 if not vertical_check(Droneinfo[g - 2], Droneinfo[g - 1], (xn, yn, zn)) and not vertical_check(Droneinfo[g - 1], (xn, yn, zn), Droneinfo[g + 1]):
                     print("Vertical check failed SA, skipping.")  # Debugging statement for vertical check failure
+                    possible_points.remove((xn, yn, zn))  # Remove the invalid point
                     continue  # Skip this iteration
-                if g < (numtrackp + 2) * (i + 1) - 1:
+                if g < (numtrackp + 2) * (i + 1) - 2:
                     if not vertical_check((xn, yn, zn), Droneinfo[g + 1], Droneinfo[g + 2]):
                         print("Vertical check failed SA, skipping.")
+                        possible_points.remove((xn, yn, zn))  # Remove the invalid point
                         continue # Skip this iteration
-                    
+
             if not Trackpointlinevalid(Droneinfo[g - 1], (xn, yn, zn)) and not Trackpointlinevalid((xn, yn, zn), Droneinfo[g + 1]):
                 print("Line check failed SA, skipping.")  # Debugging statement for line check failure
+                possible_points.remove((xn, yn, zn))  # Remove the invalid point
                 continue  # Skip this iteration
             
             if not Dist(Droneinfo[g - 1], (xn, yn, zn)) or not Dist((xn, yn, zn), Droneinfo[g + 1]):
                 print("Distance check failed SA, skipping.")  # Debugging statement for distance check failure
-                continue  # Skip this iteration
+                possible_points.remove((xn, yn, zn))  # Remove the invalid point
+                continue  # Skip this iteration 
             
             flag = True  # Mark that a valid point has been found
         
