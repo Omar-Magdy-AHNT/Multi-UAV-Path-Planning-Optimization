@@ -32,8 +32,8 @@ def newsolution():
     for i in range(numdrones):  # Iterate over each drone
         flag = False  # Initialize flag to track valid new solutions
         start_idx = (numtrackp) * i  # Calculate start index for the current drone's points
-        end_idx = (numtrackp) * (i + 1)  # Calculate end index for the current drone's points (exclusive)
-        f = random.randint(start_idx, end_idx - 1)  # Randomly select an index for the drone's point
+        end_idx = (numtrackp) * (i + 1) -1 # Calculate end index for the current drone's points (exclusive)
+        f = random.randint(start_idx, end_idx)  # Randomly select an index for the drone's point
         g = Droneinfo.index(Output[f])  # Get the actual index in the Droneinfo list
         
         while not flag:  # Loop until a valid new point is found
@@ -63,15 +63,20 @@ def newsolution():
                 continue  # Skip this iteration
 
             # Check for vertical constraints if applicable
-            if g > (1 + (numtrackp + 2) * i) and not vertical_check(Droneinfo[g - 2], Droneinfo[g - 1], (xn, yn, zn)) and not vertical_check(Droneinfo[g - 1], (xn, yn, zn), Droneinfo[g + 1]) and not vertical_check((xn, yn, zn), Droneinfo[g + 1], Droneinfo[g + 2]):
-                print("Vertical check failed SA, skipping.")  # Debugging statement for vertical check failure
-                continue  # Skip this iteration
-            
+            if g > (1 + (numtrackp + 2) * i) :
+                if not vertical_check(Droneinfo[g - 2], Droneinfo[g - 1], (xn, yn, zn)) and not vertical_check(Droneinfo[g - 1], (xn, yn, zn), Droneinfo[g + 1]):
+                    print("Vertical check failed SA, skipping.")  # Debugging statement for vertical check failure
+                    continue  # Skip this iteration
+                if g < (numtrackp + 2) * (i + 1) - 1:
+                    if not vertical_check((xn, yn, zn), Droneinfo[g + 1], Droneinfo[g + 2]):
+                        print("Vertical check failed SA, skipping.")
+                        continue # Skip this iteration
+                    
             if not Trackpointlinevalid(Droneinfo[g - 1], (xn, yn, zn)) and not Trackpointlinevalid((xn, yn, zn), Droneinfo[g + 1]):
                 print("Line check failed SA, skipping.")  # Debugging statement for line check failure
                 continue  # Skip this iteration
             
-            if not Dist(Droneinfo[g - 1], (xn, yn, zn)) and not Dist((xn, yn, zn), Droneinfo[g + 1]):
+            if not Dist(Droneinfo[g - 1], (xn, yn, zn)) or not Dist((xn, yn, zn), Droneinfo[g + 1]):
                 print("Distance check failed SA, skipping.")  # Debugging statement for distance check failure
                 continue  # Skip this iteration
             
