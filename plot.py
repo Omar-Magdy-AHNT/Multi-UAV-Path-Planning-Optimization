@@ -102,4 +102,3 @@ if suitable_points:
 else:
     print("No suitable point found.")
 
-print(terrain_map[381, 305, 70])

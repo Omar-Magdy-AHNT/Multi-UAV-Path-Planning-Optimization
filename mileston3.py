@@ -32,14 +32,15 @@ def newsolution():
     for i in range(numdrones):  # Iterate over each drone
         flag = False  # Initialize flag to track valid new solutions
         start_idx = (numtrackp) * i  # Calculate start index for the current drone's points
-        end_idx = (numtrackp) * (i + 1) - 1  # Calculate end index for the current drone's points
+        end_idx = (numtrackp) * (i + 1)  # Calculate end index for the current drone's points (exclusive)
         f = random.randint(start_idx, end_idx - 1)  # Randomly select an index for the drone's point
         g = Droneinfo.index(Output[f])  # Get the actual index in the Droneinfo list
-        while flag == False:  # Loop until a valid new point is found
+        
+        while not flag:  # Loop until a valid new point is found
             x, y, z = Output[f]  # Get current point's coordinates
-            xn = x + random.choice([-3,-2, -1, 0 ,1, 2,3])  # Randomly perturb x
-            yn = y + random.choice([ -2, -1,0, 1, 2])  # Randomly perturb y
-            zn = z + random.choice([ -1, 0,1])  # Randomly perturb z
+            xn = x + random.choice([-3, -2, -1, 0, 1, 2, 3])  # Randomly perturb x
+            yn = y + random.choice([-2, -1, 0, 1, 2])  # Randomly perturb y
+            zn = z + random.choice([-1, 0, 1])  # Randomly perturb z
             
             # Check if new point is within bounds
             if xn < 0 or xn > gridsize or yn < 0 or yn > gridsize or zn < 0 or zn > gridsize:
@@ -57,7 +58,7 @@ def newsolution():
                 continue  # Skip this iteration
 
             # Check for horizontal constraints if applicable
-            if not Horz_check(Droneinfo[g - 1], (xn, yn, zn)) and not Horz_check(Droneinfo[g+1], (xn, yn, zn)):
+            if not Horz_check(Droneinfo[g - 1], (xn, yn, zn)) and not Horz_check(Droneinfo[g + 1], (xn, yn, zn)):
                 print("Horizontal check failed SA, skipping.")  # Debugging statement for horizontal check failure
                 continue  # Skip this iteration
 
@@ -65,15 +66,20 @@ def newsolution():
             if g > (1 + (numtrackp + 2) * i) and not vertical_check(Droneinfo[g - 2], Droneinfo[g - 1], (xn, yn, zn)) and not vertical_check(Droneinfo[g - 1], (xn, yn, zn), Droneinfo[g + 1]) and not vertical_check((xn, yn, zn), Droneinfo[g + 1], Droneinfo[g + 2]):
                 print("Vertical check failed SA, skipping.")  # Debugging statement for vertical check failure
                 continue  # Skip this iteration
+            
             if not Trackpointlinevalid(Droneinfo[g - 1], (xn, yn, zn)) and not Trackpointlinevalid((xn, yn, zn), Droneinfo[g + 1]):
                 print("Line check failed SA, skipping.")  # Debugging statement for line check failure
                 continue  # Skip this iteration
+            
             if not Dist(Droneinfo[g - 1], (xn, yn, zn)) and not Dist((xn, yn, zn), Droneinfo[g + 1]):
                 print("Distance check failed SA, skipping.")  # Debugging statement for distance check failure
                 continue  # Skip this iteration
+            
             flag = True  # Mark that a valid point has been found
+        
         Output[f] = (xn, yn, zn)  # Update the Output with the new point
         Droneinfo[g] = (xn, yn, zn)  # Update the Droneinfo with the new point
+
 
 
 cost = []  # Initialize a list to store cost values
