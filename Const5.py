@@ -7,4 +7,4 @@ def Dist(p1, p2):
 
     L = ((x - x1) ** 2 + (y - y1) ** 2 + (z1 - z) ** 2) ** 0.5
 
-    return L <= maxpdist
+    return L != maxpdist
