@@ -4,7 +4,7 @@ import math
 import numpy as np
 
 numdrones = 2   #depends on the number of drones
-maxpdist = 4 #depends on the controller accuracy 
+maxpdist = 3 #depends on the controller accuracy 
 gridsize = 10 #depends on the size of the grid
 numtrackp = math.ceil((((((gridsize-0)**2)+((gridsize-0)**2)+((gridsize-0)**2))**0.5)/maxpdist) + 1)
 distDrone = []
@@ -15,3 +15,5 @@ Output = []
 danger = []
 obstlist= []
 Droneinfo = []
+startpoint = []
+endpoint = []

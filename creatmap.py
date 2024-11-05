@@ -4,6 +4,17 @@ from Const3 import *  # Import more constants
 from Const4 import Trackpointlinevalid  # Import function to validate track points
 from Const5 import *  # Import remaining constants
 from Data import *  # Import data structures and variables
+def generate_integer_points(grid_size):
+    points = []
+    for x in range(grid_size + 1):
+        for y in range(grid_size + 1):
+            for z in range(grid_size + 1):
+                points.append((x, y, z))
+    return points
+
+# Example usage
+grid_size = 10
+all_points = generate_integer_points(grid_size)
 
 # Function to create obstacles in the simulation grid
 def createobs(gridsize):
@@ -36,45 +47,45 @@ def createmap():
         startpt = (0, i, 1)  # Define the start point for the drone
         endpt = (gridsize-2, gridsize - i, 2)  # Define the endpoint for the drone
         Droneinfo.append(startpt)  # Add the start point to Droneinfo
-        
+        startpoint.append(startpt)  # Add the start point to the startpoint list
+        endpoint.append(endpt)  # Add the end point to the endpoint list
         added_points = 0  # Initialize count of successfully added track points
-
+        possible_points = generate_integer_points(gridsize)
         # Keep trying until we add the required number of track points
         while added_points < numtrackp:  
-            x = random.randint(0, gridsize)  # Generate a random x coordinate
-            y = random.randint(0, gridsize)  # Generate a random y coordinate
-            z = random.randint(0, gridsize)  # Generate a random z coordinate
-            print(f"Generated point: ({x}, {y}, {z})")  # Debugging line to show generated points
+            x, y, z = random.choice(possible_points)  # Randomly select a new point from possible points
 
             # Check if the generated point is in the obstacle list
             if (x, y, z) in obstlist:
                 print("Point is an obstacle, skipping.")  # Debugging statement for obstacles
+                possible_points.remove((x, y, z))  # Remove the point from possible points
                 continue  # Skip to the next iteration
             
             # Check if the generated point is already in Droneinfo
             if (x, y, z) in Droneinfo:
                 print("Point is already in Droneinfo, skipping.")  # Debugging statement for duplicates
+                possible_points.remove((x, y, z))  # Remove the point from possible points
                 continue  # Skip to the next iteration
 
             # Check for horizontal constraints if applicable
             if not Horz_check(Droneinfo[-1], (x, y, z)):
                 print("Horizontal check failed, skipping.")  # Debugging statement for horizontal check
+                possible_points.remove((x, y, z))  # Remove the point from possible points
                 continue  # Skip to the next iteration
 
             # Check for vertical constraints if applicable
             if len(Droneinfo) > (1 + (numtrackp + 2) * i) and not vertical_check(Droneinfo[-2], Droneinfo[-1], (x, y, z)):
                 print("Vertical check failed, skipping.")  # Debugging statement for vertical check
+                possible_points.remove((x, y, z))  # Remove the point from possible points
                 continue  # Skip to the next iteration
             
             # Validate the line between the last point and the new point
             if  not Trackpointlinevalid(Droneinfo[-1], (x, y, z)):
                 print("Line check failed, skipping.")  # Debugging statement for line check
+                possible_points.remove((x, y, z))  # Remove the point from possible points
                 continue  # Skip to the next iteration
             
-            # Check distance constraints between the last point and the new point
-            if  not Dist(Droneinfo[-1], (x, y, z)):
-                print("Distance check failed, skipping.")  # Debugging statement for distance check
-                continue  # Skip to the next iteration
+
 
             # If all checks pass, add the point to the drone's information
             Droneinfo.append((x, y, z))  # Add the new track point to Droneinfo
@@ -82,3 +93,9 @@ def createmap():
             added_points += 1  # Increment the count of successfully added track points
         
         Droneinfo.append(endpt)  # Append the endpoint after adding all track points
+
+"""             # Check distance constraints between the last point and the new point
+            if  not Dist(Droneinfo[-1], (x, y, z)):
+                print("Distance check failed, skipping.")  # Debugging statement for distance check
+                possible_points.remove((x, y, z))  # Remove the point from possible points
+                continue  # Skip to the next iteration """

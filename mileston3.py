@@ -110,10 +110,6 @@ def newsolution():
                 possible_points.remove((xn, yn, zn))  # Remove the invalid point
                 continue  # Skip this iteration
             
-            if not Dist(Droneinfo[g - 1], (xn, yn, zn)) or not Dist((xn, yn, zn), Droneinfo[g + 1]):
-                print("Distance check failed SA, skipping.")  # Debugging statement for distance check failure
-                possible_points.remove((xn, yn, zn))  # Remove the invalid point
-                continue  # Skip this iteration 
             
             flag = True  # Mark that a valid point has been found
         
@@ -181,7 +177,6 @@ def SA():
 
         i += 1  # Increment iteration counter
         cost.append(best_objective)  # Store the best objective for this iteration
-
     # Return the best solution and its objective after all iterations
     return best_solution, best_objective
 
@@ -225,12 +220,23 @@ def plot_map(Droneinfo, obstlist, numdrones, numtrackp, gridsize):
     plt.show()  # Show the plot
 
 createmap()  # Create the initial map with obstacles and drone info
-#print('obstlist', obstlist)  # Debugging print statement (commented out)
-#print('Droneinfo', Droneinfo)  # Debugging print statement (commented out)
-#print('numdrones', numdrones)  # Debugging print statement (commented out)
-#print('numtrackp', numtrackp)  # Debugging print statement (commented out)
-#print('Output', Output)  # Debugging print statement (commented out)
 bs , bo = SA()  # Execute the simulated annealing algorithm
+Output = bs  # Update the Output with the best solution found
+Droneinfo = []  # Reset Droneinfo list
+for i in range(numdrones):  # Iterate over each drone
+    startpt = startpoint[i]  # Get the start point for the current drone
+    endpt = endpoint[i]  # Get the end point for the current drone
+    Droneinfo.append(startpt)  # Add the start point to Droneinfo
+    for j in range(numtrackp):  # Iterate over each track point
+        Droneinfo.append(Output[j +(numtrackp*i)])  # Add the current track point to Droneinfo
+    Droneinfo.append(endpt)  # Add the end point to Droneinfo
+
 print(cost)  # Print the cost history
+print(Droneinfo)  # Print the final drone paths
 plt.plot(cost)  # Plot the cost history over iterations
 plot_map(Droneinfo, obstlist, numdrones, numtrackp, gridsize)  # Plot the final drone paths and obstacles
+
+"""             if  not Dist(Droneinfo[g - 1], (xn, yn, zn)) or not Dist((xn, yn, zn), Droneinfo[g + 1]):
+                print("Distance check failed SA, skipping.")  # Debugging statement for distance check failure
+                possible_points.remove((xn, yn, zn))  # Remove the invalid point
+                continue  # Skip this iteration  """
