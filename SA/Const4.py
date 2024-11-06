@@ -2,10 +2,10 @@ from Data import *
 
 def Trackpointlinevalid(p1,p2): ##get points between each 2 track points to make sure no objects in between
     pl = bresenham_3d(p1,p2)
-    for i in range(len(obstlist)-1):
+    for i in range(len(obstlist)):
         if obstlist[i] in pl:
             return False
-    for i in range(len(Droneinfo)-1):
+    for i in range(len(Droneinfo)):
         if Droneinfo[i] in pl:
             return False
     return True
