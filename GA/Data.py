@@ -22,6 +22,7 @@ numparents = 3
 numchildren = 3
 nummutants = 2
 numelite = 1
+alpha = 0.7
 parents = []  # Initialize parents list
 children = []  # Initialize children list
 fitness = []  # Initialize fitness list
