@@ -48,7 +48,7 @@ def createmap():
         for i in range(numdrones):  # Iterate over each drone
             startpt = (0, i, 1)  # Define the start point for the drone
             endpt = (gridsize-2, gridsize - i, 2)  # Define the endpoint for the drone
-            Droneinfo[z].append(startpt)  # Add the start point to Droneinfo
+            children[z].append(startpt)  # Add the start point to Droneinfo
             startpoint[z].append(startpt)  # Add the start point to the startpoint list
             endpoint[z].append(endpt)  # Add the end point to the endpoint list
             added_points = 0  # Initialize count of successfully added track points
@@ -64,25 +64,25 @@ def createmap():
                     continue  # Skip to the next iteration
             
                 # Check if the generated point is already in Droneinfo
-                if (x, y, z) in Droneinfo[z]:
+                if (x, y, z) in children[z]:
                     print("Point is already in Droneinfo, skipping.")  # Debugging statement for duplicates
                     possible_points.remove((x, y, z))  # Remove the point from possible points
                     continue  # Skip to the next iteration
 
                 # Check for horizontal constraints if applicable
-                if not Horz_check(Droneinfo[z][-1], (x, y, z)):
+                if not Horz_check(children[z][-1], (x, y, z)):
                     print("Horizontal check failed, skipping.")  # Debugging statement for horizontal check
                     possible_points.remove((x, y, z))  # Remove the point from possible points
                     continue  # Skip to the next iteration
 
                 # Check for vertical constraints if applicable
-                if len(Droneinfo[z]) > (1 + (numtrackp + 2) * i) and not vertical_check(Droneinfo[-2], Droneinfo[-1], (x, y, z)):
+                if len(children[z]) > (1 + (numtrackp + 2) * i) and not vertical_check(children[-2],children[-1], (x, y, z)):
                     print("Vertical check failed, skipping.")  # Debugging statement for vertical check
                     possible_points.remove((x, y, z))  # Remove the point from possible points
                     continue  # Skip to the next iteration
             
                 # Validate the line between the last point and the new point
-                if  not Trackpointlinevalid(Droneinfo[z][-1], (x, y, z)):
+                if  not Trackpointlinevalid(children[z][-1], (x, y, z)):
                     print("Line check failed, skipping.")  # Debugging statement for line check
                     possible_points.remove((x, y, z))  # Remove the point from possible points
                     continue  # Skip to the next iteration
@@ -90,8 +90,8 @@ def createmap():
 
 
                 # If all checks pass, add the point to the drone's information
-                Droneinfo[z].append((x, y, z))  # Add the new track point to Droneinfo
+                children[z].append((x, y, z))  # Add the new track point to Droneinfo
                 Output[z].append((x, y, z))  # Also add the point to Output
                 added_points += 1  # Increment the count of successfully added track points
         
-            Droneinfo[z].append(endpt)  # Append the endpoint after adding all track points
+            children[z].append(endpt)  # Append the endpoint after adding all track points
