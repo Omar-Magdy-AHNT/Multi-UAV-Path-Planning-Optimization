@@ -88,7 +88,7 @@ def newsolution():
                 continue  # Skip this iteration
 
             # Check for horizontal constraints if applicable
-            if not Horz_check(Droneinfo[g - 1], (xn, yn, zn)) and not Horz_check(Droneinfo[g + 1], (xn, yn, zn)):
+            if not Horz_check(Droneinfo[g - 1], (xn, yn, zn)) and not Horz_check((xn, yn, zn),Droneinfo[g + 1]):
                 print("Horizontal check failed SA, skipping.")  # Debugging statement for horizontal check failure
                 possible_points.remove((xn, yn, zn))  # Remove the invalid point
                 continue  # Skip this iteration

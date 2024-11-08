@@ -44,13 +44,13 @@ def createobs(gridsize):
 
 # Function to create the map for drones, including start and end points
 def createmap():
-    for z in range(numparents):
+    for k in range(numparents):
         for i in range(numdrones):  # Iterate over each drone
             startpt = (0, i, 1)  # Define the start point for the drone
             endpt = (gridsize-2, gridsize - i, 2)  # Define the endpoint for the drone
-            children[z].append(startpt)  # Add the start point to Droneinfo
-            startpoint[z].append(startpt)  # Add the start point to the startpoint list
-            endpoint[z].append(endpt)  # Add the end point to the endpoint list
+            children[k].append(startpt)  # Add the start point to Droneinfo
+            startpoint.append(startpt)  # Add the start point to the startpoint list
+            endpoint.append(endpt)  # Add the end point to the endpoint list
             added_points = 0  # Initialize count of successfully added track points
             possible_points = generate_integer_points(gridsize)
             # Keep trying until we add the required number of track points
@@ -58,31 +58,25 @@ def createmap():
                 x, y, z = random.choice(possible_points)  # Randomly select a new point from possible points
 
                 # Check if the generated point is in the obstacle list
-                if (x, y, z) in obstlist:
-                    print("Point is an obstacle, skipping.")  # Debugging statement for obstacles
-                    possible_points.remove((x, y, z))  # Remove the point from possible points
-                    continue  # Skip to the next iteration
-            
-                # Check if the generated point is already in Droneinfo
-                if (x, y, z) in children[z]:
-                    print("Point is already in Droneinfo, skipping.")  # Debugging statement for duplicates
+                if not PointValid((x, y, z), children[k], (len(children[k])-1)):
+                    print("Point is already invalid, skipping.")  # Debugging statement for duplicates
                     possible_points.remove((x, y, z))  # Remove the point from possible points
                     continue  # Skip to the next iteration
 
                 # Check for horizontal constraints if applicable
-                if not Horz_check(children[z][-1], (x, y, z)):
+                if not Horz_check(children[k][-1], (x, y, z)):
                     print("Horizontal check failed, skipping.")  # Debugging statement for horizontal check
                     possible_points.remove((x, y, z))  # Remove the point from possible points
                     continue  # Skip to the next iteration
 
                 # Check for vertical constraints if applicable
-                if len(children[z]) > (1 + (numtrackp + 2) * i) and not vertical_check(children[-2],children[-1], (x, y, z)):
+                if len(children[k]) > (1 + ((numtrackp + 2) * i)) and not vertical_check(children[k][-2],children[k][-1], (x, y, z)):
                     print("Vertical check failed, skipping.")  # Debugging statement for vertical check
                     possible_points.remove((x, y, z))  # Remove the point from possible points
                     continue  # Skip to the next iteration
             
                 # Validate the line between the last point and the new point
-                if  not Trackpointlinevalid(children[z][-1], (x, y, z)):
+                if  not Trackpointlinevalid(children[k][-1], (x, y, z),children[k],(len(children[k])-1)):
                     print("Line check failed, skipping.")  # Debugging statement for line check
                     possible_points.remove((x, y, z))  # Remove the point from possible points
                     continue  # Skip to the next iteration
@@ -90,8 +84,8 @@ def createmap():
 
 
                 # If all checks pass, add the point to the drone's information
-                children[z].append((x, y, z))  # Add the new track point to Droneinfo
-                Output[z].append((x, y, z))  # Also add the point to Output
+                children[k].append((x, y, z))  # Add the new track point to Droneinfo
                 added_points += 1  # Increment the count of successfully added track points
         
-            children[z].append(endpt)  # Append the endpoint after adding all track points
+            children[k].append(endpt)  # Append the endpoint after adding all track points
+    print(children)
