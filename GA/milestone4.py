@@ -30,22 +30,22 @@ def elite():
         del children[i]
         del fitness[i]
 
-def generate_alpha_combinations(parents, i, k, alpha_values,int):
+def generate_alpha_combinations(parents, i, k, alpha_values,intg):
     combinations = []
-    if int == 1:
+    if intg == 1:
         for alpha in alpha_values:
-            x1 = (alpha * parents[0][k]) - (1 - alpha) * parents[i + 1][k]
-            y1 = (alpha * parents[0][k]) - (1 - alpha) * parents[i + 1][k]
-            z1 = (alpha * parents[0][k]) - (1 - alpha) * parents[i + 1][k]
-        
+            x1 = (alpha * parents[0][k][0]) - (1 - alpha) * parents[i + 1][k][0]
+            y1 = (alpha * parents[0][k][1]) - (1 - alpha) * parents[i + 1][k][1]
+            z1 = (alpha * parents[0][k][2]) - (1 - alpha) * parents[i + 1][k][2]
+            x1, y1, z1 = int(round(x1)), int(round(y1)), int(round(z1))
             c1 = (x1, y1, z1)
             combinations.append(c1)
     else:
         for alpha in alpha_values:
-            x2 = (alpha*parents[i+1][k])- (1-alpha)*parents[0][k]
-            y2 = (alpha*parents[i+1][k])- (1-alpha)*parents[0][k]
-            z2 = (alpha*parents[i+1][k])- (1-alpha)*parents[0][k]
-        
+            x2 = (alpha*parents[i+1][k][0])- (1-alpha)*parents[0][k][0]
+            y2 = (alpha*parents[i+1][k][1])- (1-alpha)*parents[0][k][1]
+            z2 = (alpha*parents[i+1][k][2])- (1-alpha)*parents[0][k][2]
+            x2, y2, z2 = int(round(x2)), int(round(y2)), int(round(z2))
             c2 = (x2, y2, z2)
             combinations.append(c2)
     return combinations
@@ -53,13 +53,13 @@ def generate_alpha_combinations(parents, i, k, alpha_values,int):
 
 
 def crossover():
-    parents = elites
-    for i in range(numparents - numelite):
-        i = fitness.index(min(fitness))
-        parents.append(children[i])
+    parents.append(elites)
+    for il in range(numparents - numelite):
+        h = fitness.index(min(fitness))
+        parents.append(children[h])
     fitness.clear()
     children.clear()
-    for i in range(numchildren//2):
+    for i in range(round(numchildren/2)):
         child1 = []
         child2 = []
         for j in range(numdrones):
@@ -74,24 +74,27 @@ def crossover():
                     child1.append(endpoint[j])
                     child2.append(endpoint[j])  
                     continue
-                import numpy as np
                 # Generate an array of alpha values from 0.4 to 0.9
                 alpha_values = np.linspace(0.4, 0.9, num=10)  # Adjust `num` for the desired number of points
                 combine = generate_alpha_combinations(parents, i, k, alpha_values,1)
                 for c in range(len(combine)):
                     c1 = combine[c]
-                    f1 = check(c1,child1,k)
+                    f1 = check(c1,child1,(len(child1)-1))
                     if f1 == False:
                         child1.append(c1)
                         break
+                    if f1 == True and c == len(combine)-1:
+                        child1.append(parents[0][k+(numtrackp+2)*j])
+
                 combine = generate_alpha_combinations(parents, i, k, alpha_values,2)
                 for v in range(len(combine)):
                     c2= combine[v]
-                    f2 = check(c2,child2,k)
+                    f2 = check(c2,child2,(len(child2)-1))
                     if f2 == False:
                         child2.append(c2)
                         break
-
+                    if f2 == True and v == len(combine)-1:
+                        child2.append(parents[i][k+(numtrackp+2)*j])
         children.append(child1)
         children.append(child2)
     if numchildren % 2 == 1:
@@ -100,12 +103,15 @@ def crossover():
             del children[-1]
         else: 
             del children[-2]
-    children.extend(mutants)
-    children.extend(elites)
+    for p in range(nummutants):
+        children.append(mutants[p])
+    children.append(elites)
+
 
 def fittest():
     fitness.clear()
     z= []
+    print(len(children),"a7a")
     for i in range(len(children)):
         x = func1(i,children) 
         y = func2(i,children)
