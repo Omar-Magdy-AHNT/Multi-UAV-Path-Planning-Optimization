@@ -23,8 +23,8 @@ def newgen():
 def elite():
     global elites
     elites.clear()
+    fittest()
     for i in range(numelite):
-        fittest()
         i = fitness.index(min(fitness))
         elites = children[i]
         del children[i]
@@ -53,7 +53,7 @@ def generate_alpha_combinations(parents, i, k, alpha_values,intg):
 
 
 def crossover():
-    parents.append(elites)
+    parents.append(elites.copy())
     for il in range(numparents - numelite):
         h = fitness.index(min(fitness))
         parents.append(children[h])
@@ -104,14 +104,13 @@ def crossover():
         else: 
             del children[-2]
     for p in range(nummutants):
-        children.append(mutants[p])
-    children.append(elites)
+        children.append(mutants[p].copy())
+    children.append(elites.copy())
 
 
 def fittest():
     fitness.clear()
     z= []
-    print(len(children),"a7a")
     for i in range(len(children)):
         x = func1(i,children) 
         y = func2(i,children)
@@ -132,10 +131,10 @@ def generate_combinations(original_xyz, offsets):
 
 def mutation():
     global mutants
+    fittest()
     for f in range(nummutants):
-        fittest()
         i = fitness.index(max(fitness))
-        mutants.append(children[i])
+        mutants.append(children[i].copy())
         for j in range(numdrones):
             for k in range(numtrackp):
                 x1 ,y1 ,z1 = mutants[f][k+1+(numtrackp*j)]
@@ -230,9 +229,10 @@ for i in range(numofgen):
     newgen()
     print("Generation: ", i)
     fittest()
-    cost.append(fitness[fitness.index(min(fitness))])
+    print("Best Fitness: ", fitness)
+    cost.append(min(fitness))
 
-Output = elites[fitness.index(min(fitness))]
+Output = elites.copy()
 plt.plot(cost)  # Plot the cost history over iterations
 plot_map(Output, obstlist, numdrones, numtrackp, gridsize)  # Plot the final drone paths and obstacles
 
