@@ -88,4 +88,3 @@ def createmap():
                 added_points += 1  # Increment the count of successfully added track points
         
             children[k].append(endpt)  # Append the endpoint after adding all track points
-    print(children)

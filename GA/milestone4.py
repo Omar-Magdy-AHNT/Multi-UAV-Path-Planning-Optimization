@@ -11,6 +11,8 @@ from creatmap import *  # Import function to create the map
 import matplotlib.pyplot as plt  # Import matplotlib for plotting
 from mpl_toolkits.mplot3d import Axes3D  # Import 3D plotting toolkit
 import numpy as np  # Import numpy for numerical operations
+import itertools
+
 
 def newgen():
     elite()
@@ -19,6 +21,7 @@ def newgen():
 
 
 def elite():
+    global elites
     elites.clear()
     for i in range(numelite):
         fittest()
@@ -26,6 +29,28 @@ def elite():
         elites = children[i]
         del children[i]
         del fitness[i]
+
+def generate_alpha_combinations(parents, i, k, alpha_values,int):
+    combinations = []
+    if int == 1:
+        for alpha in alpha_values:
+            x1 = (alpha * parents[0][k]) - (1 - alpha) * parents[i + 1][k]
+            y1 = (alpha * parents[0][k]) - (1 - alpha) * parents[i + 1][k]
+            z1 = (alpha * parents[0][k]) - (1 - alpha) * parents[i + 1][k]
+        
+            c1 = (x1, y1, z1)
+            combinations.append(c1)
+    else:
+        for alpha in alpha_values:
+            x2 = (alpha*parents[i+1][k])- (1-alpha)*parents[0][k]
+            y2 = (alpha*parents[i+1][k])- (1-alpha)*parents[0][k]
+            z2 = (alpha*parents[i+1][k])- (1-alpha)*parents[0][k]
+        
+            c2 = (x2, y2, z2)
+            combinations.append(c2)
+    return combinations
+
+
 
 def crossover():
     parents = elites
@@ -42,29 +67,30 @@ def crossover():
                 f1 = True
                 f2 = True
                 if k == 0:
-                    children[i][k] = startpoint[j]
+                    child1.append(startpoint[j])
+                    child2.append(startpoint[j])
                     continue
                 if k == numtrackp+1:
-                    children[i][k] = endpoint[j]
+                    child1.append(endpoint[j])
+                    child2.append(endpoint[j])  
                     continue
-                while f1:
-                    alpha = random.uniform(0.2,0.9)
-                    x1 = (alpha*parents[0][k]) - (1-alpha)*parents[i+1][k]
-                    y1 = (alpha*parents[0][k]) - (1-alpha)*parents[i+1][k]
-                    z1 = (alpha*parents[0][k]) - (1-alpha)*parents[i+1][k]
-                    c1 = (x1,y1,z1)
+                import numpy as np
+                # Generate an array of alpha values from 0.4 to 0.9
+                alpha_values = np.linspace(0.4, 0.9, num=10)  # Adjust `num` for the desired number of points
+                combine = generate_alpha_combinations(parents, i, k, alpha_values,1)
+                for c in range(len(combine)):
+                    c1 = combine[c]
                     f1 = check(c1,child1,k)
                     if f1 == False:
-                        child1.append((x1,y1,z1))
-
-                while f2:
-                    x2 = (alpha*parents[i+1][k])- (1-alpha)*parents[0][k]
-                    y2 = (alpha*parents[i+1][k])- (1-alpha)*parents[0][k]
-                    z2 = (alpha*parents[i+1][k])- (1-alpha)*parents[0][k]
-                    c2 = (x2,y2,z2)
+                        child1.append(c1)
+                        break
+                combine = generate_alpha_combinations(parents, i, k, alpha_values,2)
+                for v in range(len(combine)):
+                    c2= combine[v]
                     f2 = check(c2,child2,k)
                     if f2 == False:
-                        child2.append((x2,y2,z2))
+                        child2.append(c2)
+                        break
 
         children.append(child1)
         children.append(child2)
@@ -80,28 +106,39 @@ def crossover():
 def fittest():
     fitness.clear()
     z= []
-    for i in range(numchildren):
+    for i in range(len(children)):
         x = func1(i,children) 
         y = func2(i,children)
         for j in range(numdrones):
             z.append(x[j] + y[j])
         fitness.append(z)
 
+def generate_combinations(original_xyz, offsets):
+    original_x, original_y, original_z = original_xyz
+
+    # Generate all combinations of x, y, and z with each offset
+    combinations = [
+        (original_x + dx, original_y + dy, original_z + dz)
+        for dx, dy, dz in itertools.product(offsets, repeat=3)
+    ]
+
+    return combinations
+
 def mutation():
+    global mutants
     for f in range(nummutants):
         fittest()
         i = fitness.index(max(fitness))
-        mutants = children[i]
+        mutants.append(children[i])
         for j in range(numdrones):
             for k in range(numtrackp):
-                flag = True
-                while flag:
-                    x1 = mutants[f][(k+1)+(numtrackp*j)][0] + random.choice(-1,0,1)
-                    y1 = mutants[f][(k+1)+(numtrackp*j)][1] + random.choice(-1,0,1)
-                    z1 = mutants[f][(k+1)+(numtrackp*j)][2] + random.choice(-1,0,1)
+                x1 ,y1 ,z1 = mutants[f][k+1+(numtrackp*j)]
+                offest = [-2,-1,0,1,2]
+                combinations = generate_combinations((x1, y1, z1), offest)                
+                for n in range(len(combinations)):
                     if check((x1,y1,z1),mutants[f],(k+1)+(numtrackp*j)) == False:
                         mutants[f][(k+1)+(numtrackp*j)] = (x1,y1,z1)
-                        flag = False
+                        break
 
 # Function to plot the drone paths and obstacles in 3D
 def plot_map(Droneinfo, obstlist, numdrones, numtrackp, gridsize):
