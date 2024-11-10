@@ -110,13 +110,12 @@ def crossover():
 
 def fittest():
     fitness.clear()
-    z= []
     for i in range(len(children)):
         x = func1(i,children) 
         y = func2(i,children)
-        for j in range(numdrones):
-            z.append(x[j] + y[j])
-        fitness.append(z)
+        total_dist = sum(x)
+        total_danger = sum(y)
+        fitness.append(total_dist + total_danger)
 
 def generate_combinations(original_xyz, offsets):
     original_x, original_y, original_z = original_xyz
