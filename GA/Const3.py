@@ -4,6 +4,6 @@ def PointValid(p1,a,i): ##make sure no 2 track points are the same and no 2 dron
     if p1 in obstlist:
         return False  
     count = a[0:i].count(p1)
-    if count > 1:
+    if count > 0:
         return False
     return True

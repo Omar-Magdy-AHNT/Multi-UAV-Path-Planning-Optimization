@@ -26,7 +26,7 @@ def elite():
     fittest()
     for i in range(numelite):
         i = fitness.index(min(fitness))
-        elites = children[i]
+        elites = children[i].copy()
         del children[i]
         del fitness[i]
 
@@ -37,17 +37,23 @@ def generate_alpha_combinations(parents, i, k, alpha_values,intg):
             x1 = (alpha * parents[0][k][0]) - (1 - alpha) * parents[i + 1][k][0]
             y1 = (alpha * parents[0][k][1]) - (1 - alpha) * parents[i + 1][k][1]
             z1 = (alpha * parents[0][k][2]) - (1 - alpha) * parents[i + 1][k][2]
-            x1, y1, z1 = int(round(x1)), int(round(y1)), int(round(z1))
-            c1 = (x1, y1, z1)
+            x, y, z = int(round(x1)), int(round(y1)), int(round(z1))
+            c1 = (x, y, z)
+            combinations.append(c1)
+            x,y,z = int(x1),int(y1),int(z1)
+            c1 = (x, y, z)
             combinations.append(c1)
     else:
         for alpha in alpha_values:
             x2 = (alpha*parents[i+1][k][0])- (1-alpha)*parents[0][k][0]
             y2 = (alpha*parents[i+1][k][1])- (1-alpha)*parents[0][k][1]
             z2 = (alpha*parents[i+1][k][2])- (1-alpha)*parents[0][k][2]
-            x2, y2, z2 = int(round(x2)), int(round(y2)), int(round(z2))
-            c2 = (x2, y2, z2)
+            x, y, z = int(round(x2)), int(round(y2)), int(round(z2))
+            c2 = (x, y, z)
             combinations.append(c2)
+            x,y,z = int(x2),int(y2),int(z2)
+            c1 = (x, y, z)
+            combinations.append(c1)
     return combinations
 
 
@@ -75,7 +81,7 @@ def crossover():
                     child2.append(endpoint[j])  
                     continue
                 # Generate an array of alpha values from 0.4 to 0.9
-                alpha_values = np.linspace(0.4, 0.9, num=10)  # Adjust `num` for the desired number of points
+                alpha_values = np.linspace(0.2, 1, num=30)  # Adjust `num` for the desired number of points
                 combine = generate_alpha_combinations(parents, i, k, alpha_values,1)
                 for c in range(len(combine)):
                     c1 = combine[c]
@@ -130,18 +136,22 @@ def generate_combinations(original_xyz, offsets):
 
 def mutation():
     global mutants
+    mutants.clear()
     fittest()
     for f in range(nummutants):
-        i = fitness.index(max(fitness))
+        vix = sorted(fitness, reverse=True)
+        i = fitness.index(vix[f])
         mutants.append(children[i].copy())
         for j in range(numdrones):
-            for k in range(numtrackp):
-                x1 ,y1 ,z1 = mutants[f][k+1+(numtrackp*j)]
-                offest = [-2,-1,0,1,2]
+            start_idx = (j * (numtrackp + 2)) + 1  # Start index for current drone
+            end_idx = (j + 1) * (numtrackp +2) -1  # End index for current drone
+            for k in range(start_idx, end_idx):
+                x1 ,y1 ,z1 = mutants[f][k]
+                offest = [-5,-4,-3,-2,-1,0,1,2,3,4,5]
                 combinations = generate_combinations((x1, y1, z1), offest)                
                 for n in range(len(combinations)):
-                    if check((x1,y1,z1),mutants[f],(k+1)+(numtrackp*j)) == False:
-                        mutants[f][(k+1)+(numtrackp*j)] = (x1,y1,z1)
+                    if check(combinations[n],mutants[f],k) == False:
+                        mutants[f][k] = combinations[n]
                         break
 
 # Function to plot the drone paths and obstacles in 3D
@@ -195,28 +205,28 @@ def check(p1,a1,k):
     if not PointValid(p1,a1,d):
         print("Point is already exists GA, skipping.")  # Debugging statement for duplicates
         return True
-    
+
     if d > 1:
-        if not vertical_check(a1[d - 2], a1[d - 1], (x, y, z)):
+        if not vertical_check(a1[d - 2], a1[d - 1], p1):
             print("Vertical check failed GA, skipping.")
             return True
         
-    if not Trackpointlinevalid(a1[d - 1], (x, y, z),a1,d): 
+    if not Trackpointlinevalid(a1[d - 1], p1,a1,d): 
         print("Line check failed GA, skipping.")  # Debugging statement for line check failure
         return True
     
-    if not Horz_check(a1[d - 1], (x, y, z)) :
+    if not Horz_check(a1[d - 1], p1) :
         print("Horizontal check failed GA, skipping.")  # Debugging statement for horizontal check failure
         return True
     
     if d == numtrackp or d == (len(a1)-2) : #last track point needs to be checked with point after 
-            if not vertical_check(a1[d - 1],(x, y, z),a1[ - 1]):
+            if not vertical_check(a1[d - 1],p1,a1[ - 1]):
                 print("Vertical check failed GA, skipping.")
                 return True
-            if not Trackpointlinevalid((x, y, z), a1[-1],a1,d):
+            if not Trackpointlinevalid(p1, a1[-1],a1,d):
                 print("Line check failed GA, skipping.")  # Debugging statement for line check failure
                 return True
-            if not Horz_check((x, y, z),a1[-1]):
+            if not Horz_check(p1,a1[-1]):
                 print("Horizontal check failed GA, skipping.")  # Debugging statement for horizontal check failure
                 return True
     return False
@@ -224,12 +234,19 @@ def check(p1,a1,k):
 cost=[]
 Output=[]
 createmap()
+createobs(gridsize)
+
 for i in range(numofgen):
     newgen()
     print("Generation: ", i)
     fittest()
     print("Best Fitness: ", fitness)
     cost.append(min(fitness))
+    print(mutants,"mutants")
+    print(children,"children")
+    print(elites,"elites")
+    print(endpoint,"endpoints")
+    print(obstlist,"obstacles")
 
 Output = elites.copy()
 plt.plot(cost)  # Plot the cost history over iterations
