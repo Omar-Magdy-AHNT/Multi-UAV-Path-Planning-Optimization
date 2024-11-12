@@ -251,4 +251,3 @@ for i in range(numofgen):
 Output = elites.copy()
 plt.plot(cost)  # Plot the cost history over iterations
 plot_map(Output, obstlist, numdrones, numtrackp, gridsize)  # Plot the final drone paths and obstacles
-
