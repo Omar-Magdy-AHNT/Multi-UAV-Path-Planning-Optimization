@@ -25,10 +25,11 @@ def elite():
     elites.clear()
     fittest()
     for i in range(numelite):
-        i = fitness.index(min(fitness))
-        elites = children[i].copy()
-        del children[i]
-        del fitness[i]
+        z = fitness.index(min(fitness))
+        elites.append(children[z].copy())
+        del children[z]
+        del fitness[z]
+
 
 def generate_alpha_combinations(parents, i, k, alpha_values,intg):
     combinations = []
@@ -59,7 +60,8 @@ def generate_alpha_combinations(parents, i, k, alpha_values,intg):
 
 
 def crossover():
-    parents.append(elites.copy())
+    for i in range(numelite):
+        parents.append(elites[i].copy())
     for il in range(numparents - numelite):
         h = fitness.index(min(fitness))
         parents.append(children[h])
@@ -113,7 +115,8 @@ def crossover():
             del children[-2]
     for p in range(nummutants):
         children.append(mutants[p].copy())
-    children.append(elites.copy())
+    for l in range(numelite):
+        children.append(elites[l].copy())
 
 
 def fittest():
@@ -123,7 +126,7 @@ def fittest():
         y = func2(i,children)
         total_dist = sum(x)
         total_danger = sum(y)
-        fitness.append(total_dist + total_danger)
+        fitness.append(total_dist +total_danger)
 
 def generate_combinations(original_xyz, offsets):
     original_x, original_y, original_z = original_xyz
@@ -140,7 +143,9 @@ def mutation():
     global mutants
     mutants.clear()
     if len(children)< nummutants:
-        children.append(elites.copy())
+        k = abs(len(children)-nummutants)
+        for u in range(k):
+            children.append(elites[u].copy())
     fittest()
     vix = sorted(fitness, reverse=True)
     for f in range(nummutants):     
@@ -247,12 +252,13 @@ for i in range(numofgen):
     fittest()
     print("Best Fitness: ", fitness)
     cost.append(min(fitness))
+
 """     print(mutants,"mutants")
     print(children,"children")
-    print(elites,"elites")
+    
     print(endpoint,"endpoints")
     print(obstlist,"obstacles") """
-
-Output = elites.copy()
+elite()
+Output = elites[0].copy()
 plt.plot(cost)  # Plot the cost history over iterations
 plot_map(Output, obstlist, numdrones, numtrackp, gridsize)  # Plot the final drone paths and obstacles

@@ -4,7 +4,7 @@ import math
 import numpy as np
 
 numdrones = 2   #depends on the number of drones
-maxpdist = 3 #depends on the controller accuracy 
+maxpdist = 5 #depends on the controller accuracy 
 gridsize = 10 #depends on the size of the grid
 numtrackp = math.ceil((((((gridsize-0)**2)+((gridsize-0)**2)+((gridsize-0)**2))**0.5)/maxpdist) + 1)
 dsafe = 2
@@ -14,15 +14,11 @@ Output = []
 obstlist= []
 startpoint = []
 endpoint = []
-#pe = 0.16 
-#pm = 0.33
-#pc = 0.5 
-#total number of chromosomes = 6
 numofgen = 200
-numparents = 3
+numparents = 4
 numchildren = 2
-nummutants = 3
-numelite = 1
+nummutants = 4
+numelite = 2
 parents = []  # Initialize parents list
 children = [[] for _ in range(numparents)]  # Initialize children list
 fitness = []  # Initialize fitness list
