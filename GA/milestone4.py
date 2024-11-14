@@ -1,3 +1,4 @@
+# Import necessary modules
 from Const1 import *  # Import constants related to the simulation
 from Const2 import *  # Import additional constants
 from Const3 import *  # Import more constants
@@ -11,159 +12,248 @@ from creatmap import *  # Import function to create the map
 import matplotlib.pyplot as plt  # Import matplotlib for plotting
 from mpl_toolkits.mplot3d import Axes3D  # Import 3D plotting toolkit
 import numpy as np  # Import numpy for numerical operations
-import itertools
+import itertools  # Import itertools for generating combinations
 
 
+# Main function to generate a new generation in the genetic algorithm
 def newgen():
-    elite()
-    mutation()
-    crossover()
+    elite()  # Select elite individuals
+    mutation()  # Apply mutation to the population
+    crossover()  # Apply crossover to the population
 
 
+# Select the elite individuals from the current population
 def elite():
     global elites
-    elites.clear()
-    fittest()
+    elites.clear()  # Clear the elites list
+    fittest()  # Find the fittest individuals
     for i in range(numelite):
-        z = fitness.index(min(fitness))
-        elites.append(children[z].copy())
-        del children[z]
-        del fitness[z]
+        z = fitness.index(min(fitness))  # Get the index of the fittest individual
+        elites.append(children[z].copy())  # Add the fittest individual to elites
+        del children[z]  # Remove it from the children list
+        del fitness[z]  # Remove its fitness value
 
 
-def generate_alpha_combinations(parents, i, k, alpha_values,intg):
-    combinations = []
-    if intg == 1:
-        for alpha in alpha_values:
+# Function to generate alpha combinations for crossover
+def generate_alpha_combinations(parents, i, k, alpha_values, intg):
+    combinations = []  # Initialize an empty list to store the generated combinations
+
+    if intg == 1:  # First case for generating alpha combinations (based on parents[0] and parents[i+1])
+        for alpha in alpha_values:  # Iterate through each alpha value in the provided range
+            # Compute the new coordinates using alpha and the corresponding values from parents
             x1 = (alpha * parents[0][k][0]) - (1 - alpha) * parents[i + 1][k][0]
             y1 = (alpha * parents[0][k][1]) - (1 - alpha) * parents[i + 1][k][1]
             z1 = (alpha * parents[0][k][2]) - (1 - alpha) * parents[i + 1][k][2]
+            
+            # Round the resulting coordinates to integers and append to combinations list
             x, y, z = int(round(x1)), int(round(y1)), int(round(z1))
+            c1 = (x, y, z)  # Create a tuple with the rounded values
+            combinations.append(c1)  # Append the combination to the list
+            
+            # Repeat the same but without rounding to integers, directly adding to the list
+            x, y, z = int(x1), int(y1), int(z1)
             c1 = (x, y, z)
-            combinations.append(c1)
-            x,y,z = int(x1),int(y1),int(z1)
-            c1 = (x, y, z)
-            combinations.append(c1)
-    else:
-        for alpha in alpha_values:
-            x2 = (alpha*parents[i+1][k][0])- (1-alpha)*parents[0][k][0]
-            y2 = (alpha*parents[i+1][k][1])- (1-alpha)*parents[0][k][1]
-            z2 = (alpha*parents[i+1][k][2])- (1-alpha)*parents[0][k][2]
+            combinations.append(c1)  # Append the second version of the combination
+
+    else:  # Second case for generating alpha combinations (based on parents[i+1] and parents[0])
+        for alpha in alpha_values:  # Iterate through each alpha value in the provided range
+            # Compute the new coordinates using alpha and the corresponding values from parents
+            x2 = (alpha * parents[i + 1][k][0]) - (1 - alpha) * parents[0][k][0]
+            y2 = (alpha * parents[i + 1][k][1]) - (1 - alpha) * parents[0][k][1]
+            z2 = (alpha * parents[i + 1][k][2]) - (1 - alpha) * parents[0][k][2]
+            
+            # Round the resulting coordinates to integers and append to combinations list
             x, y, z = int(round(x2)), int(round(y2)), int(round(z2))
-            c2 = (x, y, z)
-            combinations.append(c2)
-            x,y,z = int(x2),int(y2),int(z2)
+            c2 = (x, y, z)  # Create a tuple with the rounded values
+            combinations.append(c2)  # Append the combination to the list
+            
+            # Repeat the same but without rounding to integers, directly adding to the list
+            x, y, z = int(x2), int(y2), int(z2)
             c1 = (x, y, z)
-            combinations.append(c1)
-    return combinations
+            combinations.append(c1)  # Append the second version of the combination
+
+    return combinations  # Return the list of generated combinations
 
 
 
+
+# Function to perform crossover between elite and non-elite individuals to generate new children
 def crossover():
+    # Append elite individuals to parents list
     for i in range(numelite):
-        parents.append(elites[i].copy())
+        parents.append(elites[i].copy())  # Copy each elite individual to parents
+
+    # Append non-elite individuals (based on fitness) to parents list
     for il in range(numparents - numelite):
-        h = fitness.index(min(fitness))
-        parents.append(children[h])
+        h = fitness.index(min(fitness))  # Find the index of the individual with the minimum fitness
+        parents.append(children[h])  # Append the corresponding child to parents list
+
+    # Clear previous fitness and children lists for the next generation
     fitness.clear()
     children.clear()
-    for i in range(round(numchildren/2)):
-        child1 = []
-        child2 = []
-        for j in range(numdrones):
-            for k in range(numtrackp+2):
-                f1 = True
-                f2 = True
+
+    # Generate new children by performing crossover on parents
+    for i in range(round(numchildren/2)):  # Iterate for half the number of children
+        child1 = []  # Initialize first child
+        child2 = []  # Initialize second child
+
+        for j in range(numdrones):  # Iterate over the number of drones
+            for k in range(numtrackp + 2):  # Iterate over the track points plus start/end points
+                f1 = True  # Flag for checking the first child
+                f2 = True  # Flag for checking the second child
+
+                # Start point handling
                 if k == 0:
                     child1.append(startpoint[j])
                     child2.append(startpoint[j])
-                    continue
-                if k == numtrackp+1:
+                    continue  # Skip the start point since it's always the same
+
+                # End point handling
+                if k == numtrackp + 1:
                     child1.append(endpoint[j])
                     child2.append(endpoint[j])  
-                    continue
-                # Generate an array of alpha values from 0.4 to 0.9
-                alpha_values = np.linspace(0.1, 0.7, num=20)  # Adjust `num` for the desired number of points
-                combine = generate_alpha_combinations(parents, i, k, alpha_values,1)
+                    continue  # Skip the end point since it's always the same
+
+                # Generate an array of alpha values for interpolation
+                alpha_values = np.linspace(0.1, 0.7, num=20)  # Adjust the number of alpha values as needed
+                
+                # Generate alpha combinations for the first child
+                combine = generate_alpha_combinations(parents, i, k, alpha_values, 1)
                 for c in range(len(combine)):
-                    zz = sorted(combine, reverse=True)
-                    c1 = zz[c]
-                    f1 = check(c1,child1,(len(child1)-1))
-                    if f1 == False:
+                    zz = sorted(combine, reverse=True)  # Sort combinations in descending order
+                    c1 = zz[c]  # Select the c-th combination
+                    f1 = check(c1, child1, (len(child1) - 1))  # Check if the combination is valid for the first child
+                    if not f1:  # If not valid, add it to child1 and break
                         child1.append(c1)
                         break
-                    if f1 == True and c == len(combine)-1:
-                        child1.append(parents[0][k+(numtrackp+2)*j])
+                    if f1 and c == len(combine) - 1:  # If no valid combination found, fallback to the parent value
+                        child1.append(parents[0][k + (numtrackp + 2) * j])
 
-                combine = generate_alpha_combinations(parents, i, k, alpha_values,2)
+                # Generate alpha combinations for the second child
+                combine = generate_alpha_combinations(parents, i, k, alpha_values, 2)
                 for v in range(len(combine)):
-                    zy = sorted(combine, reverse=True)
-                    c2 = zz[v]
-                    f2 = check(c2,child2,(len(child2)-1))
-                    if f2 == False:
+                    zy = sorted(combine, reverse=True)  # Sort combinations in descending order
+                    c2 = zy[v]  # Select the v-th combination
+                    f2 = check(c2, child2, (len(child2) - 1))  # Check if the combination is valid for the second child
+                    if not f2:  # If not valid, add it to child2 and break
                         child2.append(c2)
                         break
-                    if f2 == True and v == len(combine)-1:
-                        child2.append(parents[i][k+(numtrackp+2)*j])
+                    if f2 and v == len(combine) - 1:  # If no valid combination found, fallback to the parent value
+                        child2.append(parents[i][k + (numtrackp + 2) * j])
+
+        # Append the generated children to the children list
         children.append(child1)
         children.append(child2)
+
+    # If the number of children is odd, discard the worst child based on fitness
     if numchildren % 2 == 1:
-        fittest()
-        if fitness[-1] > fitness[-2]:
-            del children[-1]
+        fittest()  # Update fitness values
+        if fitness[-1] > fitness[-2]:  # Compare the last two fitness values
+            del children[-1]  # Discard the last child if it has worse fitness
         else: 
-            del children[-2]
+            del children[-2]  # Otherwise, discard the second last child
+
+    # Add mutants and elite individuals to the children list
     for p in range(nummutants):
-        children.append(mutants[p].copy())
+        children.append(mutants[p].copy())  # Append each mutant to the children list
+
     for l in range(numelite):
-        children.append(elites[l].copy())
+        children.append(elites[l].copy())  # Append each elite individual to the children list
 
 
+
+# Function to calculate and update the fitness of all children
 def fittest():
+    # Clear previous fitness values
     fitness.clear()
-    for i in range(len(children)):
-        x = func1(i,children) 
-        y = func2(i,children)
-        total_dist = sum(x)
-        total_danger = sum(y)
-        fitness.append(total_dist +total_danger)
 
+    # Iterate over each child in the children list
+    for i in range(len(children)):
+        # Calculate x and y values for the i-th child using func1 and func2
+        x = func1(i, children)  # This function returns distance values for the i-th child
+        y = func2(i, children)  # This function returns danger values for the i-th child
+
+        # Calculate the total distance by summing the x values
+        total_dist = sum(x)
+
+        # Calculate the total danger by summing the y values
+        total_danger = sum(y)
+
+        # Append the sum of total distance and total danger to the fitness list
+        fitness.append(total_dist + total_danger)
+
+import itertools
+
+# Function to generate all combinations of (x, y, z) by applying offsets
 def generate_combinations(original_xyz, offsets):
+    # Unpack the original x, y, z coordinates from the input tuple
     original_x, original_y, original_z = original_xyz
 
-    # Generate all combinations of x, y, and z with each offset
+    # Generate all combinations of x, y, and z by adding each offset to the original values
     combinations = [
-        (original_x + dx, original_y + dy, original_z + dz)
-        for dx, dy, dz in itertools.product(offsets, repeat=3)
+        (original_x + dx, original_y + dy, original_z + dz)  # Apply offsets to original coordinates
+        for dx, dy, dz in itertools.product(offsets, repeat=3)  # itertools.product generates all combinations of offsets
     ]
 
+    # Return the list of generated combinations
     return combinations
 
+
 def mutation():
+    # Accessing the global mutants list to store mutated solutions
     global mutants
+
+    # Clear any previous mutant solutions from the list
     mutants.clear()
-    if len(children)< nummutants:
-        k = abs(len(children)-nummutants)
+
+    # Ensure the number of mutants is at least `nummutants`, if not, append elites to fill the gap
+    if len(children) < nummutants:
+        k = abs(len(children) - nummutants)
         for u in range(k):
-            children.append(elites[u].copy())
+            children.append(elites[u].copy())  # Add elite solutions to the children list
+
+    # Find the fittest solutions by evaluating the fitness of children
     fittest()
+
+    # Sort the fitness list in descending order
     vix = sorted(fitness, reverse=True)
+
+    # Select the top `nummutants` children based on their fitness
     for f in range(nummutants):     
+        # Find the index of the fittest solution
         i = fitness.index(vix[f])
+
+        # Append the fittest solutions to the mutants list
         mutants.append(children[i].copy())
+
+        # Mutate each drone's path
         for j in range(numdrones):
-            start_idx = (j * (numtrackp + 2)) + 1  # Start index for current drone
-            end_idx = (j + 1) * (numtrackp +2) -1  # End index for current drone
+            # Define the index range for the current drone's path
+            start_idx = (j * (numtrackp + 2)) + 1  # Start index for the drone
+            end_idx = (j + 1) * (numtrackp + 2) - 1  # End index for the drone
+
+            # Iterate through each point in the drone's path
             for k in range(start_idx, end_idx):
-                x1 ,y1 ,z1 = mutants[f][k]
-                offest = [-7,-6,-5,-4,-3,3,4,5,6,7]
-                combinations = generate_combinations((x1, y1, z1), offest)                
+                # Get the current coordinates (x1, y1, z1) for the point
+                x1, y1, z1 = mutants[f][k]
+
+                # Define possible offsets to mutate the position
+                offset = [-7, -6, -5, -4, -3, 3, 4, 5, 6, 7]
+
+                # Generate all possible combinations of mutated coordinates based on offsets
+                combinations = generate_combinations((x1, y1, z1), offset)                
+
+                # Sort the combinations to prioritize certain changes
                 for n in range(len(combinations)):
-                    zx = sorted(combinations, reverse=True)
-                    c = zx[n]
-                    if check(c,mutants[f],k) == False:
+                    zx = sorted(combinations, reverse=True)  # Sorting in reverse order for preference
+                    c = zx[n]  # Get the current combination
+
+                    # Check if the mutated coordinate is valid and does not violate any constraints
+                    if check(c, mutants[f], k) == False:
+                        # Apply the mutation if valid
                         mutants[f][k] = c
-                        break
+                        break  # Exit the loop after applying the mutation
+
 
 # Function to plot the drone paths and obstacles in 3D
 def plot_map(Droneinfo, obstlist, numdrones, numtrackp, gridsize):
@@ -203,62 +293,96 @@ def plot_map(Droneinfo, obstlist, numdrones, numtrackp, gridsize):
     plt.legend()  # Display the legend
     plt.show()  # Show the plot
 
-def check(p1,a1,k):
-    x= p1[0]
-    y= p1[1]
-    z= p1[2]
-    d= k
+def check(p1, a1, k):
+    # Extracting the coordinates of the point to check (x, y, z) and the index (d)
+    x = p1[0]
+    y = p1[1]
+    z = p1[2]
+    d = k
 
+    # Check if the point is within the valid grid size
     if x < 0 or x > gridsize or y < 0 or y > gridsize or z < 0 or z > gridsize:
         print("Point is out of bounds GA, skipping.")  # Debugging statement for out of bounds 
-        return True
+        return True  # Return True to indicate this point is invalid (out of bounds)
     
-    if not PointValid(p1,a1,d):
+    # Check if the point already exists in the list (duplicates)
+    if not PointValid(p1, a1, d):
         print("Point is already exists GA, skipping.")  # Debugging statement for duplicates
-        return True
+        return True  # Return True to indicate this point is invalid (duplicate)
 
+    # If the point is not the first point, check if the previous points are valid vertically
     if d > 1:
         if not vertical_check(a1[d - 2], a1[d - 1], p1):
             print("Vertical check failed GA, skipping.")
-            return True
-        
-    if not Trackpointlinevalid(a1[d - 1], p1,a1,d): 
+            return True  # Return True if vertical check fails
+    
+    # Check if the point lies on a valid line from the previous points
+    if not Trackpointlinevalid(a1[d - 1], p1, a1, d): 
         print("Line check failed GA, skipping.")  # Debugging statement for line check failure
-        return True
+        return True  # Return True if line check fails
     
-    if not Horz_check(a1[d - 1], p1) :
+    # Check if the point passes the horizontal validity check
+    if not Horz_check(a1[d - 1], p1):
         print("Horizontal check failed GA, skipping.")  # Debugging statement for horizontal check failure
-        return True
+        return True  # Return True if horizontal check fails
     
-    if d == numtrackp or d == (len(a1)-2) : #last track point needs to be checked with point after 
-            if not vertical_check(a1[d - 1],p1,a1[ - 1]):
-                print("Vertical check failed GA, skipping.")
-                return True
-            if not Trackpointlinevalid(p1, a1[-1],a1,d):
-                print("Line check failed GA, skipping.")  # Debugging statement for line check failure
-                return True
-            if not Horz_check(p1,a1[-1]):
-                print("Horizontal check failed GA, skipping.")  # Debugging statement for horizontal check failure
-                return True
+    # Special case for the last track point, needs additional checks with the point after it
+    if d == numtrackp or d == (len(a1) - 2):
+        # Check if the vertical relationship between the last point and the next one is valid
+        if not vertical_check(a1[d - 1], p1, a1[-1]):
+            print("Vertical check failed GA, skipping.")
+            return True  # Return True if vertical check fails
+        
+        # Check if the line between the current point and the last point is valid
+        if not Trackpointlinevalid(p1, a1[-1], a1, d):
+            print("Line check failed GA, skipping.")  # Debugging statement for line check failure
+            return True  # Return True if line check fails
+        
+        # Check if the horizontal relationship between the current point and the last point is valid
+        if not Horz_check(p1, a1[-1]):
+            print("Horizontal check failed GA, skipping.")  # Debugging statement for horizontal check failure
+            return True  # Return True if horizontal check fails
+    
+    # If all checks pass, return False indicating the point is valid
     return False
 
-cost=[]
+
+cost=[] #cost list to store the best fitness value of each generation
 
 def run():
+    # Initialize an empty list to store output
+    Output = []
 
-    Output=[]
+    # Generate obstacles and create the map for the simulation
     createobs(gridsize)
     createmap()
+
+    # Main loop for each generation in the genetic algorithm
     for i in range(numofgen):
+        # Generate a new generation based on the current population
         newgen()
+        
+        # Print the current generation number
         print("Generation: ", i)
+        
+        # Evaluate the fitness of the current generation
         fittest()
+        
+        # Print the fitness values for the current generation
         print("Best Fitness: ", fitness)
+        
+        # Append the best fitness value of the current generation to the cost list
         cost.append(min(fitness))
 
+    # After all generations, select the elites (best individuals)
     elite()
+
+    # Copy the best individual from the elites to the output list
     Output = elites[0].copy()
-    return  Output,cost[-1] 
+
+    # Return the best individual and the best fitness value from the last generation
+    return Output, cost[-1]
+
 
 Output, bestobjective = run()  # Run the genetic algorithm
 plt.plot(cost)  # Plot the cost history over iterations

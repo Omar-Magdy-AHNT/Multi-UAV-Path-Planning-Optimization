@@ -1,14 +1,5 @@
-from GA import Const1 
-from GA import Const2
-from GA import Const3
-from GA import Const4
-from GA import Data
-from GA import OF1
-from GA import OF2
-from GA import milestone4 as GA
+from GA import *
 from SA import *
-from SA import milestone3 as SA
-
 import numpy as np
 
 
@@ -18,7 +9,7 @@ def comparison():
     # GA
     GAfit = []
     for i in range(it):
-        out,ct = GA.run()
+        out,ct = milestone4.run()
         GAfit.append(ct)
         if i == 0:
             GA_best = out
@@ -29,7 +20,7 @@ def comparison():
     # SA
     SAfit = []
     for i in range(it):
-        out,ct = SA.run()
+        out,ct = mileston3.run()
         SAfit.append(ct)
         if i == 0:
             SA_best = out
