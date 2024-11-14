@@ -1,5 +1,5 @@
 import numpy
-from Data import *
+from SA.SA_Param import *
 
 def vertical_check(p1,p2,p3):
     xm = p1[0]

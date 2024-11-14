@@ -1,4 +1,4 @@
-from Data import *
+from GA.GA_Param import *
 
 def Trackpointlinevalid(p1,p2,x,ind): ##get points between each 2 track points to make sure no objects in between
     pl = bresenham_3d(p1,p2)

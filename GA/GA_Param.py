@@ -1,4 +1,4 @@
-import numpy  # Import numpy module for numerical operations
+import numpy as np  # Import numpy module for numerical operations
 import math  # Import math module for mathematical functions
 
 # Number of drones in the simulation (can be adjusted based on your system)
@@ -17,11 +17,11 @@ numtrackp = math.ceil((((((gridsize-0)**2)+((gridsize-0)**2)+((gridsize-0)**2))*
 # Safe distance between drones or obstacles
 dsafe = 2
 
-# Maximum angular velocity (in radians) for drone 'a' (adjustable)
-amax = 75 *numpy.pi/180  # Convert to radians
+# Maximum Hotizontal angle (in radians)
+amax = 75 *np.pi/180  # Convert to radians
 
-# Maximum angular velocity (in radians) for drone 'b' (adjustable)
-bmax = 60 *numpy.pi/180  # Convert to radians
+# Maximum Vertical angle (in radians) 
+bmax = 60 *np.pi/180  # Convert to radians
 
 # Output list to store the results of the simulation
 Output = []

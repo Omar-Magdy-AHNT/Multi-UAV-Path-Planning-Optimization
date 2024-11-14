@@ -1,17 +1,17 @@
-from Const1 import *  # Import constants related to the simulation
-from Const2 import *  # Import additional constants
-from Const3 import *  # Import more constants
-from Const4 import Trackpointlinevalid  # Import function to validate track point lines
-from Const5 import *  # Import remaining constants
-from Data import *  # Import data structures and variables
-from OF1 import *  # Import first objective function
-from OF2 import *  # Import second objective function
+from SA.SA_Const1 import *  # Import constants related to the simulation
+from SA.SA_Const2 import *  # Import additional constants
+from SA.SA_Const3 import *  # Import more constants
+from SA.SA_Const4 import Trackpointlinevalid  # Import function to validate track point lines
+from SA.SA_Const5 import *  # Import remaining constants
+from SA.SA_Param import *  # Import data structures and variables
+from SA.SA_ObjFunc1 import *  # Import first objective function
+from SA.SA_ObjFunc2 import *  # Import second objective function
 import math  # Import math module for mathematical functions
-from creatmap import *  # Import function to create the map
+from SA.SA_CreateMap import *  # Import function to create the map
 import matplotlib.pyplot as plt  # Import matplotlib for plotting
 from mpl_toolkits.mplot3d import Axes3D  # Import 3D plotting toolkit
 import numpy as np  # Import numpy for numerical operations
-
+import random  # Import random module
 
 def generate_possible_points(x, y, z):
     # Define perturbation ranges
@@ -121,21 +121,14 @@ cost = []  # Initialize a list to store cost values
 
 # Function to perform simulated annealing
 def SA():
-    tf = 1  # Final temperature
-    imax = 100  # Maximum iterations
-    alpha = 0.89  # Cooling rate
-    tn = 700  # Higher initial temperature
-    nt = 2  # Increase number of new solutions to generate per iteration
+
     current_solution = Output.copy()  # Work with a copy of the initial solution
     best_solution = current_solution.copy()  # Initialize the best solution
     current_objective = objective()  # Calculate initial objective
     best_objective = current_objective  # Initialize best objective
-    no_improvement_counter = 0  # Counter for improvements
-    improvement_threshold = 10  # Number of iterations to allow without improvement
     i = 0  # Initialize iteration counter
 
     while tn > tf and i < imax:  # Loop until temperature is low enough or max iterations reached
-        found_improvement = False  # Flag to track if any improvement is found in this iteration
 
         for j in range(nt):  # Generate new solutions
             newsolution()  # Generate a new solution
@@ -157,10 +150,6 @@ def SA():
                 current_solution = Output.copy()  # Update current solution
                 current_objective = new_objective  # Update current objective
 
-        # Update no improvement counter
-        if not found_improvement:
-            no_improvement_counter += 1  # Increment counter if no improvement was found
-        
         # Cool down the temperature
         tn = tn * alpha  # Simplified cooling schedule
 
@@ -170,9 +159,6 @@ def SA():
         print('Current Objective:', current_objective)  # Print current objective
         print('Best Objective:', best_objective)  # Print best objective found
         print('Best solution:', best_solution)  # Print best solution found
-
-        # Break early if there has been no improvement
-
 
         i += 1  # Increment iteration counter
         cost.append(best_objective)  # Store the best objective for this iteration

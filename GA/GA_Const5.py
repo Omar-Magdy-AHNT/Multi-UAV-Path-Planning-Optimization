@@ -1,4 +1,4 @@
-from Data import maxpdist  # Importing only maxpdist to avoid circular dependency
+from GA.GA_Param import maxpdist  # Importing only maxpdist to avoid circular dependency
 
 def Dist(p1, p2):
 

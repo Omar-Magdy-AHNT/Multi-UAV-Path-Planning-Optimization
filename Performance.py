@@ -9,7 +9,7 @@ def comparison():
     # GA
     GAfit = []
     for i in range(it):
-        out,ct = milestone4.run()
+        out,ct = GA.run()
         GAfit.append(ct)
         if i == 0:
             GA_best = out
@@ -20,7 +20,7 @@ def comparison():
     # SA
     SAfit = []
     for i in range(it):
-        out,ct = mileston3.run()
+        out,ct = SA.run()
         SAfit.append(ct)
         if i == 0:
             SA_best = out

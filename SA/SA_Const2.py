@@ -1,5 +1,5 @@
 import numpy
-from Data import *
+from SA.SA_Param import *
 
 def Horz_check(p1,p2):
     x = p1[0]

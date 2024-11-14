@@ -1,14 +1,13 @@
-from Data import *
+from SA.SA_Param import *
 
-def func2(i,d):
+def func2():
     b=0
-    dang = []
     for i in range(numdrones):
         totaldanger = 0
         for j in range(numtrackp):
-            x = d[i][j+(i*4)][0]
-            y = d[i][j+(i*4)][1]
-            z = d[i][j+(i*4)][2]
+            x = Droneinfo[j+(i*4)][0]
+            y = Droneinfo[j+(i*4)][1]
+            z = Droneinfo[j+(i*4)][2]
             b = 0
             for k in range(len(obstlist)):
                 x1 = obstlist[k][0]
@@ -17,5 +16,4 @@ def func2(i,d):
                 dist = (((x-x1)**2 )+ ((y-y1)**2) + ((z-z1)**2))**0.5
                 b = b + (dsafe/dist)**2  
             totaldanger = totaldanger + b          
-        dang.append(totaldanger)
-    return dang
+        danger.append(totaldanger)
