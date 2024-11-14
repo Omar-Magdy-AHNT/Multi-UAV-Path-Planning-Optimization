@@ -243,22 +243,23 @@ def check(p1,a1,k):
     return False
 
 cost=[]
-Output=[]
-createobs(gridsize)
-createmap()
-for i in range(numofgen):
-    newgen()
-    print("Generation: ", i)
-    fittest()
-    print("Best Fitness: ", fitness)
-    cost.append(min(fitness))
 
-"""     print(mutants,"mutants")
-    print(children,"children")
-    
-    print(endpoint,"endpoints")
-    print(obstlist,"obstacles") """
-elite()
-Output = elites[0].copy()
+def run():
+
+    Output=[]
+    createobs(gridsize)
+    createmap()
+    for i in range(numofgen):
+        newgen()
+        print("Generation: ", i)
+        fittest()
+        print("Best Fitness: ", fitness)
+        cost.append(min(fitness))
+
+    elite()
+    Output = elites[0].copy()
+    return  Output,cost[-1] 
+
+Output, bestobjective = run()  # Run the genetic algorithm
 plt.plot(cost)  # Plot the cost history over iterations
 plot_map(Output, obstlist, numdrones, numtrackp, gridsize)  # Plot the final drone paths and obstacles

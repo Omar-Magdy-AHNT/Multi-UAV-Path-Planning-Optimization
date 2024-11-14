@@ -12,7 +12,6 @@ import matplotlib.pyplot as plt  # Import matplotlib for plotting
 from mpl_toolkits.mplot3d import Axes3D  # Import 3D plotting toolkit
 import numpy as np  # Import numpy for numerical operations
 
-createobs(gridsize)  # Create obstacles in the grid
 
 def generate_possible_points(x, y, z):
     # Define perturbation ranges
@@ -219,20 +218,22 @@ def plot_map(Droneinfo, obstlist, numdrones, numtrackp, gridsize):
     plt.legend()  # Display the legend
     plt.show()  # Show the plot
 
-createmap()  # Create the initial map with obstacles and drone info
-bs , bo = SA()  # Execute the simulated annealing algorithm
-Output = bs  # Update the Output with the best solution found
-Droneinfo = []  # Reset Droneinfo list
-for i in range(numdrones):  # Iterate over each drone
-    startpt = startpoint[i]  # Get the start point for the current drone
-    endpt = endpoint[i]  # Get the end point for the current drone
-    Droneinfo.append(startpt)  # Add the start point to Droneinfo
-    for j in range(numtrackp):  # Iterate over each track point
-        Droneinfo.append(Output[j +(numtrackp*i)])  # Add the current track point to Droneinfo
-    Droneinfo.append(endpt)  # Add the end point to Droneinfo
+def run():
+    createobs(gridsize)  # Create obstacles in the grid
+    createmap()  # Create the initial map with obstacles and drone info
+    bs , bo = SA()  # Execute the simulated annealing algorithm
+    Output = bs  # Update the Output with the best solution found
+    Droneinfo = []  # Reset Droneinfo list
+    for i in range(numdrones):  # Iterate over each drone
+        startpt = startpoint[i]  # Get the start point for the current drone
+        endpt = endpoint[i]  # Get the end point for the current drone
+        Droneinfo.append(startpt)  # Add the start point to Droneinfo
+        for j in range(numtrackp):  # Iterate over each track point
+            Droneinfo.append(Output[j +(numtrackp*i)])  # Add the current track point to Droneinfo
+        Droneinfo.append(endpt)  # Add the end point to Droneinfo
+    return Droneinfo, bo
 
-print(cost)  # Print the cost history
-print(Droneinfo)  # Print the final drone paths
+Droneinfo,BestObjective = run()
 plt.plot(cost)  # Plot the cost history over iterations
 plot_map(Droneinfo, obstlist, numdrones, numtrackp, gridsize)  # Plot the final drone paths and obstacles
 
