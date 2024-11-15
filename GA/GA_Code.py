@@ -1,3 +1,9 @@
+import sys
+import os
+
+# Add the root directory of your project to the sys.path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 # Import necessary modules
 from GA.GA_Const1 import *  # Import constants related to the simulation
 from GA.GA_Const2 import *  # Import additional constants
@@ -7,12 +13,13 @@ from GA.GA_Const5 import *  # Import remaining constants
 from GA.GA_Param import *  # Import data structures and variables
 from GA.GA_ObjFunc1 import *  # Import first objective function
 from GA.GA_ObjFunc2 import *  # Import second objective function
-import math  # Import math module for mathematical functions
 from GA.GA_CreateMap import *  # Import function to create the map
 import matplotlib.pyplot as plt  # Import matplotlib for plotting
 from mpl_toolkits.mplot3d import Axes3D  # Import 3D plotting toolkit
 import numpy as np  # Import numpy for numerical operations
 import itertools  # Import itertools for generating combinations
+import copy  # Import the copy module
+
 
 
 # Main function to generate a new generation in the genetic algorithm
@@ -29,7 +36,7 @@ def elite():
     fittest()  # Find the fittest individuals
     for i in range(numelite):
         z = fitness.index(min(fitness))  # Get the index of the fittest individual
-        elites.append(children[z].copy())  # Add the fittest individual to elites
+        elites.append(copy.deepcopy(children[z]))  # Add the fittest individual to elites
         del children[z]  # Remove it from the children list
         del fitness[z]  # Remove its fitness value
 
@@ -81,7 +88,7 @@ def generate_alpha_combinations(parents, i, k, alpha_values, intg):
 def crossover():
     # Append elite individuals to parents list
     for i in range(numelite):
-        parents.append(elites[i].copy())  # Copy each elite individual to parents
+        parents.append(copy.deepcopy(elites[i]))  # Copy each elite individual to parents
 
     # Append non-elite individuals (based on fitness) to parents list
     for il in range(numparents - numelite):
@@ -155,10 +162,10 @@ def crossover():
 
     # Add mutants and elite individuals to the children list
     for p in range(nummutants):
-        children.append(mutants[p].copy())  # Append each mutant to the children list
+        children.append(copy.deepcopy(mutants[p]))  # Append each mutant to the children list
 
     for l in range(numelite):
-        children.append(elites[l].copy())  # Append each elite individual to the children list
+        children.append(copy.deepcopy(elites[l]))  # Append each elite individual to the children list
 
 
 
@@ -210,7 +217,7 @@ def mutation():
     if len(children) < nummutants:
         k = abs(len(children) - nummutants)
         for u in range(k):
-            children.append(elites[u].copy())  # Add elite solutions to the children list
+            children.append(copy.deepcopy(elites[u]))  # Add elite solutions to the children list
 
     # Find the fittest solutions by evaluating the fitness of children
     fittest()
@@ -224,7 +231,7 @@ def mutation():
         i = fitness.index(vix[f])
 
         # Append the fittest solutions to the mutants list
-        mutants.append(children[i].copy())
+        mutants.append(copy.deepcopy(children[i]))
 
         # Mutate each drone's path
         for j in range(numdrones):
@@ -325,7 +332,7 @@ def check(p1, a1, k):
     if not Horz_check(a1[d - 1], p1):
         print("Horizontal check failed GA, skipping.")  # Debugging statement for horizontal check failure
         return True  # Return True if horizontal check fails
-    
+
     # Special case for the last track point, needs additional checks with the point after it
     if d == numtrackp or d == (len(a1) - 2):
         # Check if the vertical relationship between the last point and the next one is valid
@@ -378,12 +385,13 @@ def run():
     elite()
 
     # Copy the best individual from the elites to the output list
-    Output = elites[0].copy()
+    Output = copy.deepcopy(elites[0])
 
     # Return the best individual and the best fitness value from the last generation
     return Output, cost[-1]
 
-
-Output, bestobjective = run()  # Run the genetic algorithm
-plt.plot(cost)  # Plot the cost history over iterations
-plot_map(Output, obstlist, numdrones, numtrackp, gridsize)  # Plot the final drone paths and obstacles
+# Only run the following code when this file is executed directly
+if __name__ == "__main__":
+    Output, bestobjective = run()  # Run the genetic algorithm
+    plt.plot(cost)  # Plot the cost history over iterations
+    plot_map(Output, obstlist, numdrones, numtrackp, gridsize)  # Plot the final drone paths and obstacles

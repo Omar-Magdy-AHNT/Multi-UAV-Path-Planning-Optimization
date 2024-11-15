@@ -4,6 +4,9 @@ from SA.SA_Const3 import *  # Import more constants
 from SA.SA_Const4 import Trackpointlinevalid  # Import function to validate track points
 from SA.SA_Const5 import *  # Import remaining constants
 from SA.SA_Param import *  # Import data structures and variables
+import random  # Import random module for random number generation
+
+#function to create all points in the grid
 def generate_integer_points(grid_size):
     points = []
     for x in range(grid_size + 1):
@@ -11,10 +14,6 @@ def generate_integer_points(grid_size):
             for z in range(grid_size + 1):
                 points.append((x, y, z))
     return points
-
-# Example usage
-grid_size = 10
-all_points = generate_integer_points(grid_size)
 
 # Function to create obstacles in the simulation grid
 def createobs(gridsize):
@@ -93,9 +92,3 @@ def createmap():
             added_points += 1  # Increment the count of successfully added track points
         
         Droneinfo.append(endpt)  # Append the endpoint after adding all track points
-
-"""             # Check distance constraints between the last point and the new point
-            if  not Dist(Droneinfo[-1], (x, y, z)):
-                print("Distance check failed, skipping.")  # Debugging statement for distance check
-                possible_points.remove((x, y, z))  # Remove the point from possible points
-                continue  # Skip to the next iteration """

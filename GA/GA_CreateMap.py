@@ -59,7 +59,7 @@ def createmap():
                 x, y, z = random.choice(possible_points)  # Randomly select a new point from possible points
 
                 # Check if the generated point is in the obstacle list
-                if not PointValid((x, y, z), children[k], (len(children[k])-1)):
+                if not PointValid((x, y, z), children[k], len(children[k])):
                     print("Point is already invalid, skipping.")  # Debugging statement for duplicates
                     possible_points.remove((x, y, z))  # Remove the point from possible points
                     continue  # Skip to the next iteration
@@ -86,6 +86,7 @@ def createmap():
 
                 # If all checks pass, add the point to the drone's information
                 children[k].append((x, y, z))  # Add the new track point to Droneinfo
+                possible_points.remove((x, y, z))  # Remove the point from possible points
                 added_points += 1  # Increment the count of successfully added track points
         
             children[k].append(endpt)  # Append the endpoint after adding all track points

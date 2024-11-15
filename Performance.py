@@ -4,12 +4,15 @@ import numpy as np
 
 
 it = 10 #Number of runs to get performance statistics
+###Head to GA_parameters.py to change the parameters of the GA
+###Head to SA_parameters.py to change the parameters of the SA
 
 def comparison():
+
     # GA
     GAfit = []
     for i in range(it):
-        out,ct = GA.run()
+        out,ct = GA_Code.run()
         GAfit.append(ct)
         if i == 0:
             GA_best = out
@@ -17,10 +20,11 @@ def comparison():
         elif out < GA_best:
             GA_best = out
             GA_ct = ct
+
     # SA
     SAfit = []
     for i in range(it):
-        out,ct = SA.run()
+        out,ct = SA_Code.run()
         SAfit.append(ct)
         if i == 0:
             SA_best = out

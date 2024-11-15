@@ -36,7 +36,7 @@ startpoint = []
 endpoint = []
 
 # Number of generations in the simulation or optimization process
-numofgen = 200
+numofgen = 100
 
 # Number of parents selected for each generation (used in evolutionary algorithms)
 numparents = 4

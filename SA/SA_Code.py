@@ -1,7 +1,14 @@
+import sys
+import os
+
+# Add the root directory of your project to the sys.path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+# Import necessary modules
 from SA.SA_Const1 import *  # Import constants related to the simulation
 from SA.SA_Const2 import *  # Import additional constants
 from SA.SA_Const3 import *  # Import more constants
-from SA.SA_Const4 import Trackpointlinevalid  # Import function to validate track point lines
+from SA.SA_Const4 import *  # Import function to validate track point lines
 from SA.SA_Const5 import *  # Import remaining constants
 from SA.SA_Param import *  # Import data structures and variables
 from SA.SA_ObjFunc1 import *  # Import first objective function
@@ -12,6 +19,7 @@ import matplotlib.pyplot as plt  # Import matplotlib for plotting
 from mpl_toolkits.mplot3d import Axes3D  # Import 3D plotting toolkit
 import numpy as np  # Import numpy for numerical operations
 import random  # Import random module
+    
 
 def generate_possible_points(x, y, z):
     # Define perturbation ranges
@@ -32,11 +40,6 @@ def generate_possible_points(x, y, z):
                 possible_points.append((xn, yn, zn))
 
     return possible_points
-
-# Example usage:
-x, y, z = 0, 0, 0  # Your original point
-points_list = generate_possible_points(x, y, z)
-print(points_list)
 
 # Function to calculate the objective value based on distances and dangers
 def objective():
@@ -120,8 +123,13 @@ def newsolution():
 cost = []  # Initialize a list to store cost values
 
 # Function to perform simulated annealing
-def SA():
-
+def SimulatedAnnealing():
+    # Define global variables to be used in the function
+    global tf
+    global tn
+    global imax
+    global alpha
+    
     current_solution = Output.copy()  # Work with a copy of the initial solution
     best_solution = current_solution.copy()  # Initialize the best solution
     current_objective = objective()  # Calculate initial objective
@@ -139,12 +147,10 @@ def SA():
             if delta < 0:
                 current_solution = Output.copy()  # Update current solution
                 current_objective = new_objective  # Update current objective
-                found_improvement = True  # Mark that we found an improvement
                 # Update the best solution if necessary
                 if new_objective < best_objective:
                     best_solution = Output.copy()  # Update the best solution
                     best_objective = new_objective  # Update the best objective
-                    no_improvement_counter = 0  # Reset counter
             # If the new solution is worse, accept it with a higher probability
             elif random.random() < math.exp(-delta / tn):
                 current_solution = Output.copy()  # Update current solution
@@ -207,7 +213,7 @@ def plot_map(Droneinfo, obstlist, numdrones, numtrackp, gridsize):
 def run():
     createobs(gridsize)  # Create obstacles in the grid
     createmap()  # Create the initial map with obstacles and drone info
-    bs , bo = SA()  # Execute the simulated annealing algorithm
+    bs , bo = SimulatedAnnealing()  # Execute the simulated annealing algorithm
     Output = bs  # Update the Output with the best solution found
     Droneinfo = []  # Reset Droneinfo list
     for i in range(numdrones):  # Iterate over each drone
@@ -219,11 +225,8 @@ def run():
         Droneinfo.append(endpt)  # Add the end point to Droneinfo
     return Droneinfo, bo
 
-Droneinfo,BestObjective = run()
-plt.plot(cost)  # Plot the cost history over iterations
-plot_map(Droneinfo, obstlist, numdrones, numtrackp, gridsize)  # Plot the final drone paths and obstacles
-
-"""             if  not Dist(Droneinfo[g - 1], (xn, yn, zn)) or not Dist((xn, yn, zn), Droneinfo[g + 1]):
-                print("Distance check failed SA, skipping.")  # Debugging statement for distance check failure
-                possible_points.remove((xn, yn, zn))  # Remove the invalid point
-                continue  # Skip this iteration  """
+# Only run the following code when this file is executed directly
+if __name__ == "__main__":
+    Droneinfo,BestObjective = run()
+    plt.plot(cost)  # Plot the cost history over iterations
+    plot_map(Droneinfo, obstlist, numdrones, numtrackp, gridsize)  # Plot the final drone paths and obstacles
