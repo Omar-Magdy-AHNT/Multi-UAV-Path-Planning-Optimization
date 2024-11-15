@@ -9,9 +9,9 @@ def func2():
 
         # Iterate through the track points of the current drone
         for j in range(start_idx, end_idx):  
-            x = Droneinfo[j+(i*4)][0]
-            y = Droneinfo[j+(i*4)][1]
-            z = Droneinfo[j+(i*4)][2]
+            x = Droneinfo[j][0]
+            y = Droneinfo[j][1]
+            z = Droneinfo[j][2]
             b = 0
             for k in range(len(obstlist)):
                 x1 = obstlist[k][0]
