@@ -24,7 +24,7 @@ amax = 75 *np.pi/180  # Convert to radians
 bmax = 60 *np.pi/180  # Convert to radians
 
 # Number of generations in the simulation or optimization process
-numofgen = 5
+numofgen = 10
 
 # Number of parents selected for each generation (used in evolutionary algorithms)
 numparents = 4
@@ -36,7 +36,7 @@ numchildren = 2
 nummutants = 4
 
 # Number of elite individuals selected for the next generation (best-performing)
-numelite = 2
+numelite = 1
 
 def set_GA_params(n_drones, max_dist, safe_dist, gen, parents, children, mutants, elite):
     global numdrones, maxpdist, gridsize, dsafe, amax, bmax, numofgen, numparents, numchildren, nummutants, numelite

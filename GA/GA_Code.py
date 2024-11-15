@@ -187,7 +187,7 @@ def fittest():
         total_danger = sum(y)
 
         # Append the sum of total distance and total danger to the fitness list
-        fitness.append(total_dist + total_danger)
+        fitness.append(total_dist + 0.6*total_danger)
 
 import itertools
 
@@ -309,45 +309,45 @@ def check(p1, a1, k):
 
     # Check if the point is within the valid grid size
     if x < 0 or x > gridsize or y < 0 or y > gridsize or z < 0 or z > gridsize:
-        print("Point is out of bounds GA, skipping.")  # Debugging statement for out of bounds 
+        #print("Point is out of bounds GA, skipping.")  # Debugging statement for out of bounds 
         return True  # Return True to indicate this point is invalid (out of bounds)
     
     # Check if the point already exists in the list (duplicates)
     if not PointValid(p1, a1, d):
-        print("Point is already exists GA, skipping.")  # Debugging statement for duplicates
+        #print("Point is already exists GA, skipping.")  # Debugging statement for duplicates
         return True  # Return True to indicate this point is invalid (duplicate)
 
     # If the point is not the first point, check if the previous points are valid vertically
     if d > 1:
         if not vertical_check(a1[d - 2], a1[d - 1], p1):
-            print("Vertical check failed GA, skipping.")
+            #print("Vertical check failed GA, skipping.")
             return True  # Return True if vertical check fails
     
     # Check if the point lies on a valid line from the previous points
     if not Trackpointlinevalid(a1[d - 1], p1, a1, d): 
-        print("Line check failed GA, skipping.")  # Debugging statement for line check failure
+        #print("Line check failed GA, skipping.")  # Debugging statement for line check failure
         return True  # Return True if line check fails
     
     # Check if the point passes the horizontal validity check
     if not Horz_check(a1[d - 1], p1):
-        print("Horizontal check failed GA, skipping.")  # Debugging statement for horizontal check failure
+        #print("Horizontal check failed GA, skipping.")  # Debugging statement for horizontal check failure
         return True  # Return True if horizontal check fails
 
     # Special case for the last track point, needs additional checks with the point after it
     if d == numtrackp or d == (len(a1) - 2):
         # Check if the vertical relationship between the last point and the next one is valid
         if not vertical_check(a1[d - 1], p1, a1[-1]):
-            print("Vertical check failed GA, skipping.")
+            #print("Vertical check failed GA, skipping.")
             return True  # Return True if vertical check fails
         
         # Check if the line between the current point and the last point is valid
         if not Trackpointlinevalid(p1, a1[-1], a1, d):
-            print("Line check failed GA, skipping.")  # Debugging statement for line check failure
+            #print("Line check failed GA, skipping.")  # Debugging statement for line check failure
             return True  # Return True if line check fails
         
         # Check if the horizontal relationship between the current point and the last point is valid
         if not Horz_check(p1, a1[-1]):
-            print("Horizontal check failed GA, skipping.")  # Debugging statement for horizontal check failure
+           #print("Horizontal check failed GA, skipping.")  # Debugging statement for horizontal check failure
             return True  # Return True if horizontal check fails
     
     # If all checks pass, return False indicating the point is valid
@@ -374,7 +374,8 @@ def run():
         
         # Evaluate the fitness of the current generation
         fittest()
-        
+        print("Best fitness value: ", min(fitness))  # Print the best fitness value of the current generation
+        print("Best individual: ", children[fitness.index(min(fitness))])  # Print the best individual of the current generation
         # Append the best fitness value of the current generation to the cost list
         cost.append(min(fitness))
 

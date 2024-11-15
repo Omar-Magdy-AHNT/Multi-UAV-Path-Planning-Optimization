@@ -2,7 +2,6 @@ import numpy
 from GA.GA_Param import *
 
 def vertical_check(p1,p2,p3):
-    print(p1,p2,p3)
     xm = p1[0]
     ym = p1[1]
     zm = p1[2]

@@ -1,10 +1,14 @@
 from SA.SA_Param import *
 
 def func2():
-    b=0
     for i in range(numdrones):
         totaldanger = 0
-        for j in range(numtrackp):
+        # Start and end index for the current drone's track points
+        start_idx = i * (numtrackp + 2)  # Start index for current drone
+        end_idx = start_idx + numtrackp  # End index for current drone (last track point)
+
+        # Iterate through the track points of the current drone
+        for j in range(start_idx, end_idx):  
             x = Droneinfo[j+(i*4)][0]
             y = Droneinfo[j+(i*4)][1]
             z = Droneinfo[j+(i*4)][2]
