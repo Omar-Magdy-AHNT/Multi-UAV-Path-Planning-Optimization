@@ -375,9 +375,6 @@ def run():
         # Evaluate the fitness of the current generation
         fittest()
         
-        # Print the fitness values for the current generation
-        print("Best Fitness: ", fitness)
-        
         # Append the best fitness value of the current generation to the cost list
         cost.append(min(fitness))
 

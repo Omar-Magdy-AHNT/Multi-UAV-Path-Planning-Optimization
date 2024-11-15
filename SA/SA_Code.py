@@ -50,8 +50,6 @@ def objective():
     total_distance = sum(distDrone)  # Sum up total distances
     total_danger = sum(danger)  # Sum up total dangers
     obj = total_distance + total_danger  # Combine distances and dangers to form objective
-    print("distance:", total_distance)  # Print total distance
-    print("danger:", total_danger)  # Print total danger
     return obj  # Return the objective value
 
 # Function to generate a new solution

@@ -4,8 +4,8 @@ import numpy as np
 
 
 it = 10 #Number of runs to get performance statistics
-###Head to GA_parameters.py to change the parameters of the GA
-###Head to SA_parameters.py to change the parameters of the SA
+###Head to GA_Param.py to change the parameters of the GA
+###Head to SA_Param.py to change the parameters of the SA
 
 def comparison():
 
