@@ -39,14 +39,11 @@ tn = 700  # Higher initial temperature
 # Number of new solutions to generate per iteration
 nt = 2  # Increase number of new solutions to generate per iteration
 
-def set_SA_params(n_drones, max_dist, grid_size, safe_dist, a_max, b_max, max_iter, final_temp, cool_rate, init_temp, new_solutions):
+def set_SA_params(n_drones, max_dist, safe_dist, max_iter, final_temp, cool_rate, init_temp, new_solutions):
     global numdrones, maxpdist, gridsize, dsafe, amax, bmax,tf, imax, alpha, tn, nt
     numdrones = n_drones
     maxpdist = max_dist
-    gridsize = grid_size
     dsafe = safe_dist
-    amax = a_max
-    bmax = b_max
     tf = final_temp
     imax = max_iter
     alpha = cool_rate

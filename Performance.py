@@ -62,17 +62,14 @@ def collect_general_parameters():
         root.title("General Parameters")
         root.attributes('-topmost', True)  
         params = {}
-        labels = ["Number of drones", "Maximum distance", "Grid size", "Safe distance", "Max horizontal angle", "Max vertical angle","Maximum iterations for all algorithms"]
+        labels = ["Number of drones", "Maximum distance", "Safe distance","Maximum iterations for all algorithms"]
         inputs = {}
 
         def submit():
             try:
                 params["num_drones"] = int(inputs["Number of drones"].get())
                 params["max_dist"] = float(inputs["Maximum distance"].get())
-                params["grid_size"] = int(inputs["Grid size"].get())
                 params["safe_dist"] = float(inputs["Safe distance"].get())
-                params["max_h_angle"] = float(inputs["Max horizontal angle"].get())
-                params["max_v_angle"] = float(inputs["Max vertical angle"].get())
                 params["Max_it"] = int(inputs["Maximum iterations for all algorithms"].get())
                 # Validation checks
                 if params["num_drones"] <= 0:
@@ -81,17 +78,8 @@ def collect_general_parameters():
                 if params["max_dist"] < 1:
                     messagebox.showerror("Input Error", "maximum distance must be greater than 0.")
                     return
-                if params["grid_size"] < 10:
-                    messagebox.showerror("Input Error", "Grid size must be greater than or equal to 10.")
-                    return
                 if params["safe_dist"] <= 0:
                     messagebox.showerror("Input Error", "safe distance must be greater than 0.")
-                    return
-                if params["max_h_angle"] < 0 or params["max_h_angle"] > 90:
-                    messagebox.showerror("Input Error", "Horizontal angle must be between 0 and 90 degrees.")
-                    return
-                if params["max_v_angle"] < 0 or params["max_v_angle"] > 90:
-                    messagebox.showerror("Input Error", "Vertical angle must be between 0 and 90 degrees.")
                     return
                 if params["Max_it"] <= 0: 
                     messagebox.showerror("Input Error", "Number of iterations must be greater than 0.")
@@ -282,10 +270,11 @@ def ask_use_defaults():
 if __name__ == "__main__":
     use_defaults = ask_use_defaults()
     if not use_defaults:
+
         general_params = collect_general_parameters()
         if general_params is None:
             sys.exit("General parameter input canceled. Exiting.")
-        print(general_params)
+
         ga_params = collect_ga_parameters()
         if ga_params is None:
             sys.exit("GA parameter input canceled. Exiting.")
@@ -298,12 +287,10 @@ if __name__ == "__main__":
         if it is None:
             sys.exit("Number of iterations input canceled. Exiting.")
             
-        set_GA_params(general_params['num_drones'],general_params['max_dist'],general_params['grid_size'],general_params['safe_dist'],\
-                        general_params['max_h_angle'],general_params['max_v_angle'],general_params['Max_it'], ga_params["num_parents"],\
-                        ga_params["num_children"], ga_params["num_mutants"], ga_params["num_elites"])
-        set_SA_params(general_params['num_drones'],general_params['max_dist'],general_params['grid_size'],general_params['safe_dist'],\
-                        general_params['max_h_angle'],general_params['max_v_angle'],general_params['Max_it'], sa_params["final_temp"],\
-                        sa_params["cooling_rate"], sa_params["initial_temp"], sa_params["new_solutions"])
+        set_GA_params(general_params['num_drones'],general_params['max_dist'],general_params['safe_dist'],general_params['Max_it'],\
+                        ga_params["num_parents"],ga_params["num_children"], ga_params["num_mutants"],ga_params["num_elites"])
+        set_SA_params(general_params['num_drones'],general_params['max_dist'],general_params['safe_dist'],general_params['Max_it'],\
+                        sa_params["final_temp"],sa_params["cooling_rate"], sa_params["initial_temp"],sa_params["new_solutions"])
     
     results = comparison()
     results_gui(*results)

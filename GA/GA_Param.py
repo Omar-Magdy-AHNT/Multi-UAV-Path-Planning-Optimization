@@ -38,14 +38,11 @@ nummutants = 4
 # Number of elite individuals selected for the next generation (best-performing)
 numelite = 2
 
-def set_GA_params(n_drones, max_dist, grid_size, safe_dist, a_max, b_max, gen, parents, children, mutants, elite):
+def set_GA_params(n_drones, max_dist, safe_dist, gen, parents, children, mutants, elite):
     global numdrones, maxpdist, gridsize, dsafe, amax, bmax, numofgen, numparents, numchildren, nummutants, numelite
     numdrones = n_drones
     maxpdist = max_dist
-    gridsize = grid_size
     dsafe = safe_dist
-    amax = a_max
-    bmax = b_max
     numofgen = gen
     numparents = parents
     numchildren = children
