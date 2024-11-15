@@ -187,7 +187,7 @@ def fittest():
         total_danger = sum(y)
 
         # Append the sum of total distance and total danger to the fitness list
-        fitness.append(total_dist + 0.6*total_danger)
+        fitness.append(total_dist + total_danger)
 
 import itertools
 
