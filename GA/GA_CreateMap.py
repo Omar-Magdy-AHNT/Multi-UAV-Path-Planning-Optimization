@@ -45,7 +45,7 @@ def createobs(gridsize):
 
 # Function to create the map for drones, including start and end points
 def createmap():
-    for k in range(numparents):  # Iterate over each child
+    for k in range((numchildren + nummutants)):  # Iterate over each child
         for i in range(numdrones):  # Iterate over each drone
             startpt = (0, i, 1)  # Define the start point for the drone
             endpt = (gridsize-2, gridsize - i, 2)  # Define the endpoint for the drone

@@ -160,9 +160,6 @@ def SimulatedAnnealing():
         # Print current best solution and its objective
         print('Iteration:', i + 1)  # Print current iteration
         print('Temperature:', tn)  # Print current temperature
-        print('Current Objective:', current_objective)  # Print current objective
-        print('Best Objective:', best_objective)  # Print best objective found
-        print('Best solution:', best_solution)  # Print best solution found
 
         i += 1  # Increment iteration counter
         cost.append(best_objective)  # Store the best objective for this iteration
@@ -226,5 +223,6 @@ def run():
 # Only run the following code when this file is executed directly
 if __name__ == "__main__":
     Droneinfo,BestObjective = run()
+    print(Droneinfo)
     plt.plot(cost)  # Plot the cost history over iterations
     plot_map(Droneinfo, obstlist, numdrones, numtrackp, gridsize)  # Plot the final drone paths and obstacles

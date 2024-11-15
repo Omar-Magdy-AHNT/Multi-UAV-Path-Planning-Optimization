@@ -13,9 +13,6 @@ gridsize = 10  # depends on the size of the grid
 # Calculate the number of track points based on grid size and max distance between points
 numtrackp = math.ceil((((((gridsize - 0) ** 2) + ((gridsize - 0) ** 2) + ((gridsize - 0) ** 2)) ** 0.5) / maxpdist) + 1)
 
-# List to store the distances between drones
-distDrone = []
-
 # Safety distance between drones, used to avoid collisions
 dsafe = 2
 
@@ -25,6 +22,36 @@ amax = 75 *np.pi/180  # Convert to radians
 # Maximum Vertical angle (in radians) 
 bmax = 60 *np.pi/180  # Convert to radians
 
+# Simulated annealing parameters
+
+# Final temperature, used to control the termination of the annealing process
+tf = 1  # Final temperature
+
+# Maximum iterations for the simulated annealing process
+imax = 100  # Maximum iterations
+
+# Cooling rate for the simulated annealing algorithm
+alpha = 0.89  # Cooling rate, controls how fast the temperature decreases
+
+# Initial temperature for the annealing process, higher value allows exploration of solutions
+tn = 700  # Higher initial temperature
+
+# Number of new solutions to generate per iteration
+nt = 2  # Increase number of new solutions to generate per iteration
+
+def set_SA_params(n_drones, max_dist, grid_size, safe_dist, a_max, b_max, max_iter, final_temp, cool_rate, init_temp, new_solutions):
+    global numdrones, maxpdist, gridsize, dsafe, amax, bmax,tf, imax, alpha, tn, nt
+    numdrones = n_drones
+    maxpdist = max_dist
+    gridsize = grid_size
+    dsafe = safe_dist
+    amax = a_max
+    bmax = b_max
+    tf = final_temp
+    imax = max_iter
+    alpha = cool_rate
+    tn = init_temp
+    nt = new_solutions    
 
 # List to store the output track points (without start and end points)
 Output = []
@@ -43,19 +70,5 @@ Droneinfo = []
 startpoint = []
 endpoint = []
 
-# Simulated annealing parameters
-
-# Final temperature, used to control the termination of the annealing process
-tf = 1  # Final temperature
-
-# Maximum iterations for the simulated annealing process
-imax = 100  # Maximum iterations
-
-# Cooling rate for the simulated annealing algorithm
-alpha = 0.89  # Cooling rate, controls how fast the temperature decreases
-
-# Initial temperature for the annealing process, higher value allows exploration of solutions
-tn = 700  # Higher initial temperature
-
-# Number of new solutions to generate per iteration
-nt = 2  # Increase number of new solutions to generate per iteration
+# List to store the distances between drones
+distDrone = []
