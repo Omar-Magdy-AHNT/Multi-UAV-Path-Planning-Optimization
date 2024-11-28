@@ -25,13 +25,13 @@ bmax = 60 *np.pi/180  # Convert to radians
 
 numparticles = 20 # Number of particles in the swarm
 
-c1 = 2.05 # Cognitive parameter
+c1 = 1.5 # Cognitive parameter
 
-c2 = 2.05# Social parameter
+c2 = 2# Social parameter
 
-w = 0.792    #inertia weight
+w = 0.65    #inertia weight
 
-maxiter = 100 # Maximum number of iterations
+maxiter = 200 # Maximum number of iterations
 
 def set_PSO_params(n_drones, max_dist, safe_dist,weight ,cognitive, social, max_iter,population):
     global numdrones, maxpdist, gridsize, dsafe, amax, bmax, w, c1, c2, maxiter, numparticles

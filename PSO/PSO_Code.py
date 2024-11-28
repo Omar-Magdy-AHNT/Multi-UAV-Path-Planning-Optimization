@@ -92,29 +92,58 @@ def check(point,ai,i):
     return False
 
 
+import numpy as np
+
+def calculate_all_velocities(w, c1, c2, velocity, personal_fitness, global_fitness, B, num_combinations):
+    # Generate evenly spaced r1 and r2 values
+    r_values = np.linspace(0, 1, num_combinations)
+    r1, r2 = np.meshgrid(r_values, r_values)  # Create a grid of r1 and r2 values
+
+    # Flatten the grids to iterate over all combinations
+    r1_flat = r1.flatten()
+    r2_flat = r2.flatten()
+
+    # Initialize an array to store all velocity combinations
+    velocities = []
+
+    # Iterate through all combinations of r1 and r2
+    for r1_val, r2_val in zip(r1_flat, r2_flat):
+        # Compute the new velocity for this r1, r2 pair
+        velocity_new = (
+            w * velocity 
+            + c1 * r1_val * (personal_fitness - B) 
+            + c2 * r2_val * (global_fitness - B)
+        )
+        velocities.append(round(velocity_new))
+        velocities.append(int(velocity_new))
+
+    # Convert the list of velocities to a 2D numpy array
+    velocities = np.array(velocities)
+    return velocities
+
+
+
 def newsol():
     for i in range(numparticles):
-        r1 = np.random.uniform(0, 1)  
-        r2 = np.random.uniform(0, 1)
         B = fits(i)
-        Velocity[i] = w * Velocity[i] +c1 *r1 * (Personal_Fitness[i] - B ) + c2 * r2 * (Global_Fitness - B)
+        vel = calculate_all_velocities(w, c1, c2, Velocity[i], Personal_Fitness[i], Global_Fitness, B, 30)
         for k in range(numdrones):
             # Calculate the start and end index for the current drone's path
             start_idx = k * (numtrackp + 2)  # Start index for current drone
             end_idx = (k + 1) * (numtrackp + 2)  # End index for current drone (inclusive of the last point)
             # Now, calculate the distance over the entire path for this drone
             for j in range(start_idx, end_idx - 1):  # Avoid out-of-bounds by stopping before the last point
+                for q in vel:
+                    px= Birds[i][j][0] + vel[q]
+                    py= Birds[i][j][1] + vel[q]
+                    pz= Birds[i][j][2] + vel[q]
+                    Pu = (px,py,pz)
 
-                px= Birds[i][j][0] + Velocity[i]
-                py= Birds[i][j][1] + Velocity[i]
-                pz= Birds[i][j][2] + Velocity[i]
-                Pu = (round(px), round(py), round(pz))
-                Pd = (int(px), int(py), int(pz))
 
-                if not check(Pu,i,j+1):
-                    Birds[i][j] = Pu
-                elif not check(Pd,i,j+1):
-                    Birds[i][j] = Pd
+                    if not check(Pu,i,j+1):
+                        Birds[i][j] = Pu
+                        Velocity[i] = vel[q]
+                        break
 
 
 
@@ -165,9 +194,10 @@ def run():
     for i in range(maxiter):
         PFittness()
         GFittness()
-        newsol()
         cost.append(Global_Fitness)
-        BestBird = Birds[Personal_Fitness.index(Global_Fitness)].copy()
+        newsol()
+    cost.append(Global_Fitness)
+    BestBird = Birds[Personal_Fitness.index(Global_Fitness)].copy()
     return BestBird, Global_Fitness
 
 # Only run the following code when this file is executed directly
