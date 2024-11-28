@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import simpledialog, messagebox, ttk
 from GA import *
 from SA import *
+from PSO import *
 import numpy as np
 
 # Default number of runs to get performance statistics

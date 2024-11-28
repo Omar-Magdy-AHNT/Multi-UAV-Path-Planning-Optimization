@@ -33,7 +33,7 @@ def createobs(gridsize):
                     y = base_y + y_offset  # Calculate y coordinate
                     point = (x, y, z)  # Create the point
                     if point not in added_points:  # Check if the point is already added
-                        obstlist.append(point)  # Add the point to the obstacle list
+                        obstlist.append(point)  # Add the point to the obstacle list  # noqa: F405
                         added_points.add(point)  # Mark this point as added
 
     # Add the floor (all points in the xy-plane at z = 0)

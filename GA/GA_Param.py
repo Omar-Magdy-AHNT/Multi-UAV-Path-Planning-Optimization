@@ -75,3 +75,6 @@ elites = []
 
 # List to store mutants (randomly generated drones/solutions)
 mutants = []  
+
+#cost list to store the best fitness value of each generation
+cost=[] 

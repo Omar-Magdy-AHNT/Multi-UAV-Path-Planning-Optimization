@@ -81,8 +81,6 @@ def createmap():
                     possible_points.remove((x, y, z))  # Remove the point from possible points
                     continue  # Skip to the next iteration
             
-
-
                 # If all checks pass, add the point to the drone's information
                 Birds[k].append((x, y, z))  # Add the new track point to Droneinfo  # noqa: F405
                 possible_points.remove((x, y, z))  # Remove the point from possible points

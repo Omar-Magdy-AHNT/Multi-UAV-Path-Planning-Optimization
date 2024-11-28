@@ -9,7 +9,6 @@ from GA.GA_Const1 import *  # Import constants related to the simulation
 from GA.GA_Const2 import *  # Import additional constants
 from GA.GA_Const3 import *  # Import more constants
 from GA.GA_Const4 import Trackpointlinevalid  # Import function to validate track point lines
-from GA.GA_Const5 import *  # Import remaining constants
 from GA.GA_Param import *  # Import data structures and variables
 from GA.GA_ObjFunc1 import *  # Import first objective function
 from GA.GA_ObjFunc2 import *  # Import second objective function
@@ -256,7 +255,7 @@ def mutation():
                     c = zx[n]  # Get the current combination
 
                     # Check if the mutated coordinate is valid and does not violate any constraints
-                    if check(c, mutants[f], k) == False:
+                    if check(c, mutants[f], k+1) == False:
                         # Apply the mutation if valid
                         mutants[f][k] = c
                         break  # Exit the loop after applying the mutation
@@ -316,23 +315,21 @@ def check(p1, a1, k):
     if not PointValid(p1, a1, d):
         #print("Point is already exists GA, skipping.")  # Debugging statement for duplicates
         return True  # Return True to indicate this point is invalid (duplicate)
+    if not Horz_check(a1[d - 1], p1):
+        #print("Horizontal check failed GA, skipping.")  # Debugging statement for horizontal check failure
+        return True  # Return True if horizontal check fails
 
-    # If the point is not the first point, check if the previous points are valid vertically
-    if d > 1:
-        if not vertical_check(a1[d - 2], a1[d - 1], p1):
-            #print("Vertical check failed GA, skipping.")
-            return True  # Return True if vertical check fails
-    
     # Check if the point lies on a valid line from the previous points
     if not Trackpointlinevalid(a1[d - 1], p1, a1, d): 
         #print("Line check failed GA, skipping.")  # Debugging statement for line check failure
         return True  # Return True if line check fails
     
-    # Check if the point passes the horizontal validity check
-    if not Horz_check(a1[d - 1], p1):
-        #print("Horizontal check failed GA, skipping.")  # Debugging statement for horizontal check failure
-        return True  # Return True if horizontal check fails
-
+    # If the point is not the first point, check if the previous points are valid vertically
+    if d > 1:
+        if not vertical_check(a1[d - 2], a1[d - 1], p1):
+            #print("Vertical check failed GA, skipping.")
+            return True  # Return True if vertical check fails
+        
     # Special case for the last track point, needs additional checks with the point after it
     if d == numtrackp or d == (len(a1) - 2):
         # Check if the vertical relationship between the last point and the next one is valid
@@ -354,12 +351,10 @@ def check(p1, a1, k):
     return False
 
 
-cost=[] #cost list to store the best fitness value of each generation
+
 
 def run():
-    # Initialize an empty list to store output
-    Output = []
-
+    global Output, cost
     # Generate obstacles and create the map for the simulation
     createobs(gridsize)
     createmap()

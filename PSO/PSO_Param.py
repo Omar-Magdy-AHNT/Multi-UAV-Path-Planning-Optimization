@@ -23,13 +23,13 @@ amax = 75 *np.pi/180  # Convert to radians
 # Maximum Vertical angle (in radians) 
 bmax = 60 *np.pi/180  # Convert to radians
 
-numparticles = 10 # Number of particles in the swarm
+numparticles = 20 # Number of particles in the swarm
 
 c1 = 2.05 # Cognitive parameter
 
-c2 = 2.05 # Social parameter
+c2 = 2.05# Social parameter
 
-w = 0.792 #inertia weight
+w = 0.792    #inertia weight
 
 maxiter = 100 # Maximum number of iterations
 
@@ -44,9 +44,17 @@ def set_PSO_params(n_drones, max_dist, safe_dist,weight ,cognitive, social, max_
     maxiter = max_iter
     numparticles = population
 
-Birds=[[] for _ in range(numparticles)]  # List to store the particles in the swarm
+# Initialize the swarm of particles
+Birds = [[] for _ in range(numparticles)]  # List to store the particles in the swarm
 
-Fitness = []  
+# Initialize the global best fitness of the swarm
+Global_Fitness = []  
+
+# Initialize the personal best fitness of each particle
+Personal_Fitness = [0 for _ in range(numparticles)]
+
+# Initialize the velocity of each particle to zero
+Velocity = [ 0 for _ in range(numparticles)]  # List to store the velocity of each particle
 
 # Output list to store the results of the simulation
 Output = []
@@ -59,3 +67,6 @@ startpoint = []
 
 # Ending point for the drones (coordinates or other relevant data)
 endpoint = []
+
+# List to store the cost history over iterations
+cost = []  
