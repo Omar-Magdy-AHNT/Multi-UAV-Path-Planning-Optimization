@@ -5,7 +5,7 @@ import math  # Import math module for mathematical functions
 numdrones = 2   # depends on the number of drones
 
 # Maximum point distance, which might represent the accuracy of the controller
-maxpdist = 3  # depends on the controller accuracy 
+maxpdist = 2  # depends on the controller accuracy 
 
 # Grid size for the simulation or optimization task
 gridsize = 10  # depends on the size of the grid
@@ -69,3 +69,4 @@ endpoint = []
 
 # List to store the distances between drones
 distDrone = []
+p = []

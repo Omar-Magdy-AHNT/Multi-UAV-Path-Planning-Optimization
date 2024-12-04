@@ -24,7 +24,7 @@ amax = 75 *np.pi/180  # Convert to radians
 bmax = 60 *np.pi/180  # Convert to radians
 
 # Number of generations in the simulation or optimization process
-numofgen = 10
+numofgen = 100
 
 # Number of parents selected for each generation (used in evolutionary algorithms)
 numparents = 4

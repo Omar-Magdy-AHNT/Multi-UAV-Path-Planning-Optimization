@@ -128,7 +128,7 @@ def crossover():
                 for c in range(len(combine)):
                     zz = sorted(combine, reverse=True)  # Sort combinations in descending order
                     c1 = zz[c]  # Select the c-th combination
-                    f1 = check(c1, child1, (len(child1) - 1))  # Check if the combination is valid for the first child
+                    f1 = check(c1, child1, (len(child1) ))  # Check if the combination is valid for the first child
                     if not f1:  # If not valid, add it to child1 and break
                         child1.append(c1)
                         break
@@ -140,7 +140,7 @@ def crossover():
                 for v in range(len(combine)):
                     zy = sorted(combine, reverse=True)  # Sort combinations in descending order
                     c2 = zy[v]  # Select the v-th combination
-                    f2 = check(c2, child2, (len(child2) - 1))  # Check if the combination is valid for the second child
+                    f2 = check(c2, child2, (len(child2)))  # Check if the combination is valid for the second child
                     if not f2:  # If not valid, add it to child2 and break
                         child2.append(c2)
                         break
@@ -188,7 +188,6 @@ def fittest():
         # Append the sum of total distance and total danger to the fitness list
         fitness.append(total_dist + total_danger)
 
-import itertools
 
 # Function to generate all combinations of (x, y, z) by applying offsets
 def generate_combinations(original_xyz, offsets):
@@ -244,7 +243,7 @@ def mutation():
                 x1, y1, z1 = mutants[f][k]
 
                 # Define possible offsets to mutate the position
-                offset = [-7, -6, -5, -4, -3, 3, 4, 5, 6, 7]
+                offset = [-7, -6, -5, -4, -3,-2,-1,1,2, 3, 4, 5, 6, 7]
 
                 # Generate all possible combinations of mutated coordinates based on offsets
                 combinations = generate_combinations((x1, y1, z1), offset)                
@@ -315,6 +314,7 @@ def check(p1, a1, k):
     if not PointValid(p1, a1, d):
         #print("Point is already exists GA, skipping.")  # Debugging statement for duplicates
         return True  # Return True to indicate this point is invalid (duplicate)
+    
     if not Horz_check(a1[d - 1], p1):
         #print("Horizontal check failed GA, skipping.")  # Debugging statement for horizontal check failure
         return True  # Return True if horizontal check fails
