@@ -23,17 +23,15 @@ amax = 75 *np.pi/180  # Convert to radians
 # Maximum Vertical angle (in radians) 
 bmax = 60 *np.pi/180  # Convert to radians
 
-numparticles = 20 # Number of particles in the swarm
+numparticles = 50 # Number of particles in the swarm
 
-c1 = 1.5 # Cognitive parameter
+w = 0.792
+c1 = 1.9
+c2 = 1.5  
 
-c2 = 2# Social parameter
+maxiter = 100 # Maximum number of iterations
 
-w = 0.65    #inertia weight
-
-maxiter = 200 # Maximum number of iterations
-
-def set_PSO_params(n_drones, max_dist, safe_dist,weight ,cognitive, social, max_iter,population):
+def set_PSO_params(n_drones, max_dist, safe_dist,max_iter,weight ,cognitive, social,population):
     global numdrones, maxpdist, gridsize, dsafe, amax, bmax, w, c1, c2, maxiter, numparticles
     numdrones = n_drones
     maxpdist = max_dist
@@ -54,7 +52,7 @@ Global_Fitness = []
 Personal_Fitness = [0 for _ in range(numparticles)]
 
 # Initialize the velocity of each particle to zero
-Velocity = [ 0 for _ in range(numparticles)]  # List to store the velocity of each particle
+Velocity = [ 1 for _ in range(numparticles)]  # List to store the velocity of each particle
 
 # Output list to store the results of the simulation
 Output = []

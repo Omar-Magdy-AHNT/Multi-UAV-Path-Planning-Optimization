@@ -25,16 +25,16 @@ bmax = 60 *np.pi/180  # Convert to radians
 # Simulated annealing parameters
 
 # Final temperature, used to control the termination of the annealing process
-tf = 1  # Final temperature
+tf = 0.01  # Final temperature
 
 # Maximum iterations for the simulated annealing process
-imax = 100  # Maximum iterations
+imax = 1000  # Maximum iterations
 
 # Cooling rate for the simulated annealing algorithm
-alpha = 0.89  # Cooling rate, controls how fast the temperature decreases
+alpha = 0.8  # Cooling rate, controls how fast the temperature decreases
 
 # Initial temperature for the annealing process, higher value allows exploration of solutions
-tn = 700  # Higher initial temperature
+tn = 1000  # Higher initial temperature
 
 # Number of new solutions to generate per iteration
 nt = 2  # Increase number of new solutions to generate per iteration

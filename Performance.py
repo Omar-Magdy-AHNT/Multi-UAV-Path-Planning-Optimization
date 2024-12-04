@@ -12,6 +12,25 @@ it = 5
 def comparison():
     global it  # Ensure the updated `it` is used globally
 
+    # PSO
+    PSOfit = []
+    for i in range(it):
+        while True:
+            try:
+                out, ct = PSO_Code.run()
+                PSOfit.append(ct)
+                if i == 0:
+                    PSO_best = out
+                    PSO_ct = ct
+                elif out < PSO_best:
+                    PSO_best = out
+                    PSO_ct = ct
+                break
+            except (IndexError, ZeroDivisionError) as e:
+                print(f"Error occurred in GA_Code.run() during iteration {i}: {e}")
+                print("Retrying iteration...")
+                continue
+
     # GA
     GAfit = []
     for i in range(it):
@@ -51,11 +70,13 @@ def comparison():
                 continue
 
     # Performance statistics
+    PSOavg = sum(PSOfit) / it
+    PSOstd = np.std(PSOfit)
     GAavg = sum(GAfit) / it
     GAstd = np.std(GAfit)
     SAavg = sum(SAfit) / it
     SAstd = np.std(SAfit)
-    return GA_best, GA_ct, GAavg, GAstd, SA_best, SA_ct, SAavg, SAstd
+    return PSO_best,PSO_ct,PSOavg,PSOstd,GA_best, GA_ct, GAavg, GAstd, SA_best, SA_ct, SAavg, SAstd
 
 def collect_general_parameters():
     try:
@@ -103,8 +124,59 @@ def collect_general_parameters():
     except Exception:
         return None
 
-import tkinter as tk
-from tkinter import ttk, messagebox
+def collect_pso_parameters():
+    try:
+        root = tk.Tk()
+        root.title("PSO Parameters")
+        root.attributes('-topmost', True)
+
+        params = {}
+        labels = ["Weight", "Cognitive Coefficient", "Social Coefficient", "Number of Particles"]
+        inputs = {}
+
+        def submit():
+            try:
+                # Get inputs and convert them to integers
+                params["weight"] = int(inputs["Weight"].get())
+                params["cognitive"] = int(inputs["Cognitive Coefficient"].get())
+                params["social"] = int(inputs["Social Coefficient"].get())
+                params["population"] = int(inputs["Number of Particles"].get())
+
+                # Validation checks
+                if params["weight"] <= 0:
+                    messagebox.showerror("Input Error", "Weight must be greater than 0.")
+                    return
+                if params["cognitive"] <=0:
+                    messagebox.showerror("Input Error", "Cognitive Coefficient must be greater than 0.")
+                    return
+                if params["social"] <= 0:
+                    messagebox.showerror("Input Error", "Social Coefficient must be greater than 0.")
+                    return
+                if params["population"] <= 0:
+                    messagebox.showerror("Input Error", "Number of Particles must be greater than 0.")
+                    return
+
+                root.destroy()  # If all checks pass, close the window
+
+            except ValueError:
+                messagebox.showerror("Input Error", "Please enter valid numeric values.")
+
+        # Create labels and entries dynamically
+        for i, label in enumerate(labels):
+            ttk.Label(root, text=label).grid(row=i, column=0, padx=10, pady=5, sticky="w")
+            entry = ttk.Entry(root)
+            entry.grid(row=i, column=1, padx=10, pady=5)
+            inputs[label] = entry
+
+        # Submit button
+        ttk.Button(root, text="Submit", command=submit).grid(row=len(labels), column=0, columnspan=2, pady=10)
+
+        root.mainloop()
+
+        return params if params else None
+
+    except Exception:
+        return None
 
 def collect_ga_parameters():
     try:
@@ -126,7 +198,7 @@ def collect_ga_parameters():
 
                 # Validation checks
                 if params["num_parents"] <= 1:
-                    messagebox.showerror("Input Error", "Number of parents must be greater than or equal to 1.")
+                    messagebox.showerror("Input Error", "Number of parents must be greater than or equal to 2.")
                     return
                 if params["num_children"] > params["num_parents"] * 2:
                     messagebox.showerror("Input Error", "Number of children must not exceed twice the number of parents.")
@@ -236,29 +308,32 @@ def collect_it_parameter():
         return None
 
 # Results GUI
-def results_gui(ga_solution, ga_fitness, ga_mean, ga_std, sa_solution, sa_fitness, sa_mean, sa_std):
+def results_gui(ga_solution, ga_fitness, ga_mean, ga_std, sa_solution, sa_fitness, sa_mean, sa_std, pso_solution, pso_fitness, pso_mean, pso_std):
     root = tk.Tk()
     root.title("Performance Comparison")
     root.attributes('-topmost', True)  # Make the window topmost
 
     # Create table with an extra column for labels
-    table = ttk.Treeview(root, columns=("Label", "GA", "SA"), show="headings", height=4)
+    table = ttk.Treeview(root, columns=("Label","PSO", "GA", "SA"), show="headings", height=4)
     table.heading("Label", text="Performance indices")
+    table.heading("PSO", text="Particle Swarm Algorithm")
     table.heading("GA", text="Genetic Algorithm")
     table.heading("SA", text="Simulated Annealing Algorithm")
 
     # Insert rows with labels and corresponding values for GA and SA
-    table.insert("", "end", values=("Mean Value", f"{ga_mean:.2f}", f"{sa_mean:.2f}"))
-    table.insert("", "end", values=("Fitness", f"{ga_fitness:.2f}", f"{sa_fitness:.2f}"))
-    table.insert("", "end", values=("Solution", f"{ga_solution}", f"{sa_solution}"))
-    table.insert("", "end", values=("Standard Deviation", f"{ga_std:.2f}", f"{sa_std:.2f}"))
+    table.insert("", "end", values=("Mean Value", f"{pso_mean:.2f}",f"{ga_mean:.2f}", f"{sa_mean:.2f}"))
+    table.insert("", "end", values=("Fitness", f"{pso_fitness:.2f}",f"{ga_fitness:.2f}", f"{sa_fitness:.2f}"))
+    table.insert("", "end", values=("Solution", f"{pso_fitness:.2f}",f"{ga_solution}", f"{sa_solution}"))
+    table.insert("", "end", values=("Standard Deviation", f"{pso_fitness:.2f}",f"{ga_std:.2f}", f"{sa_std:.2f}"))
 
     table.grid(row=0, column=0, columnspan=2, pady=10)
 
-    # Results summary (optionally)
-    ttk.Label(root, text=f"Best Mean Value: {('GA', round(ga_mean,2)) if ga_mean < sa_mean else ('SA', round(sa_mean,2))}").grid(row=1, column=0, columnspan=2, pady=5)
-    ttk.Label(root, text=f"Best Fitness Value: {('GA', round(ga_fitness,2)) if ga_fitness < sa_fitness else ('SA', round(sa_fitness,2))}").grid(row=2, column=0, columnspan=2, pady=5)
-    ttk.Label(root, text=f"Best Solution: {('GA', ga_solution) if ga_fitness < sa_fitness else ('SA', sa_solution)}").grid(row=3, column=0, columnspan=2, pady=5)
+# Results summary (optionally)
+    ttk.Label(root, text=f"Best Mean Value: {('GA', round(float(ga_mean), 2)) if float(ga_mean) < float(sa_mean) and float(ga_mean) < float(pso_mean) else ('SA', round(float(sa_mean), 2)) if float(sa_mean) < float(pso_mean) else ('PSO', round(float(pso_mean), 2))}").grid(row=1, column=0, columnspan=2, pady=5)
+    ttk.Label(root, text=f"Best Fitness Value: {('GA', round(float(ga_fitness), 2)) if float(ga_fitness) < float(sa_fitness) and float(ga_fitness) < float(pso_fitness) else ('SA', round(float(sa_fitness), 2)) if float(sa_fitness) < float(pso_fitness) else ('PSO', round(float(pso_fitness), 2))}").grid(row=2, column=0, columnspan=2, pady=5)
+    ttk.Label(root, text=f"Best Solution: {('GA', ga_solution) if float(ga_fitness) < float(sa_fitness) and float(ga_fitness) < float(pso_fitness) else ('SA', sa_solution) if float(sa_fitness) < float(pso_fitness) else ('PSO', pso_solution)}").grid(row=3, column=0, columnspan=2, pady=5)
+
+
 
     root.mainloop()
 
@@ -275,6 +350,10 @@ if __name__ == "__main__":
         general_params = collect_general_parameters()
         if general_params is None:
             sys.exit("General parameter input canceled. Exiting.")
+        
+        PSO_params = collect_pso_parameters()
+        if PSO_params is None:
+            sys.exit("PSO parameter input canceled. Exiting.")
 
         ga_params = collect_ga_parameters()
         if ga_params is None:
@@ -292,6 +371,8 @@ if __name__ == "__main__":
                         ga_params["num_parents"],ga_params["num_children"], ga_params["num_mutants"],ga_params["num_elites"])
         set_SA_params(general_params['num_drones'],general_params['max_dist'],general_params['safe_dist'],general_params['Max_it'],\
                         sa_params["final_temp"],sa_params["cooling_rate"], sa_params["initial_temp"],sa_params["new_solutions"])
+        set_PSO_params(general_params['num_drones'],general_params['max_dist'],general_params['safe_dist'],general_params['Max_it'],\
+                        PSO_params["weight"],PSO_params["cognitive"], PSO_params["social"],PSO_params["population"])
     
     results = comparison()
     results_gui(*results)
