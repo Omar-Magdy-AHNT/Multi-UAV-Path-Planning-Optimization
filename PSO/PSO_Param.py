@@ -29,7 +29,9 @@ w = 0.792
 c1 = 1.9
 c2 = 1.5  
 
-maxiter = 100 # Maximum number of iterations
+maxiter = 10 # Maximum number of iterations
+
+penalty_factor=10
 
 def set_PSO_params(n_drones, max_dist, safe_dist,max_iter,weight ,cognitive, social,population):
     global numdrones, maxpdist, gridsize, dsafe, amax, bmax, w, c1, c2, maxiter, numparticles

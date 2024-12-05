@@ -15,10 +15,10 @@ gridsize = 10
 numtrackp = math.ceil((((((gridsize-0)**2)+((gridsize-0)**2)+((gridsize-0)**2))**0.5)/maxpdist) + 1)
 
 # Safe distance between drones or obstacles
-dsafe = 2
+dsafe = 1
 
 # Maximum Horizontal angle (in radians)
-amax = 90 *np.pi/180  # Convert to radians
+amax = 75 *np.pi/180  # Convert to radians
 
 # Maximum Vertical angle (in radians) 
 bmax = 60 *np.pi/180  # Convert to radians

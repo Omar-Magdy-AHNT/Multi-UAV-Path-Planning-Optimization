@@ -14,15 +14,19 @@ def func3():
             current_point = Droneinfo[j]
             next_point = Droneinfo[j+1]
             # Extract x, y (ignore z for this check)
-            x, y, _ = current_point
-            next_x, next_y, _ = next_point
+            x, y, z = current_point
+            next_x, next_y, next_z = next_point
             
             # Penalty for going backward in x or y direction
-            if x < next_x:
-                total_penalty += penalty_factor*(next_x - x)
-            
-            if y < next_y:
-                total_penalty += penalty_factor*(next_y - y)
+            if x >= next_x:
+                total_penalty += penalty_factor*(x - next_x)*j
+            if y >= next_y:
+                total_penalty += penalty_factor*(y - next_y)*j
+
+            if z == next_z:
+                total_penalty -= penalty_factor*j
+            else:
+                total_penalty += penalty_factor
             
             # Calculate distance between current and previous point
             distance = np.linalg.norm(np.array(current_point) - np.array(next_point))
