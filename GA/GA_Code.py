@@ -9,6 +9,7 @@ from GA.GA_Const1 import *  # Import constants related to the simulation
 from GA.GA_Const2 import *  # Import additional constants
 from GA.GA_Const3 import *  # Import more constants
 from GA.GA_Const4 import Trackpointlinevalid  # Import function to validate track point lines
+from GA.GA_Const5 import *  # Import remaining constants
 from GA.GA_Param import *  # Import data structures and variables
 from GA.GA_ObjFunc1 import *  # Import first objective function
 from GA.GA_ObjFunc2 import *  # Import second objective function
@@ -121,14 +122,14 @@ def crossover():
                     continue  # Skip the end point since it's always the same
 
                 # Generate an array of alpha values for interpolation
-                alpha_values = np.linspace(0.1, 0.7, num=20)  # Adjust the number of alpha values as needed
+                alpha_values = np.linspace(0.1, 0.7, num=30)  # Adjust the number of alpha values as needed
                 
                 # Generate alpha combinations for the first child
                 combine = generate_alpha_combinations(parents, i, k, alpha_values, 1)
                 for c in range(len(combine)):
                     zz = sorted(combine, reverse=True)  # Sort combinations in descending order
                     c1 = zz[c]  # Select the c-th combination
-                    f1 = check(c1, child1, (len(child1) ))  # Check if the combination is valid for the first child
+                    f1 = check(c1, child1, (len(child1) - 1))  # Check if the combination is valid for the first child
                     if not f1:  # If not valid, add it to child1 and break
                         child1.append(c1)
                         break
@@ -140,7 +141,7 @@ def crossover():
                 for v in range(len(combine)):
                     zy = sorted(combine, reverse=True)  # Sort combinations in descending order
                     c2 = zy[v]  # Select the v-th combination
-                    f2 = check(c2, child2, (len(child2)))  # Check if the combination is valid for the second child
+                    f2 = check(c2, child2, (len(child2) - 1))  # Check if the combination is valid for the second child
                     if not f2:  # If not valid, add it to child2 and break
                         child2.append(c2)
                         break
@@ -188,6 +189,7 @@ def fittest():
         # Append the sum of total distance and total danger to the fitness list
         fitness.append(total_dist + total_danger)
 
+import itertools
 
 # Function to generate all combinations of (x, y, z) by applying offsets
 def generate_combinations(original_xyz, offsets):
@@ -243,7 +245,7 @@ def mutation():
                 x1, y1, z1 = mutants[f][k]
 
                 # Define possible offsets to mutate the position
-                offset = [-7, -6, -5, -4, -3,-2,-1,1,2, 3, 4, 5, 6, 7]
+                offset = [-7, -6, -5, -4, -3, 3, 4, 5, 6, 7]
 
                 # Generate all possible combinations of mutated coordinates based on offsets
                 combinations = generate_combinations((x1, y1, z1), offset)                
@@ -254,7 +256,7 @@ def mutation():
                     c = zx[n]  # Get the current combination
 
                     # Check if the mutated coordinate is valid and does not violate any constraints
-                    if check(c, mutants[f], k+1) == False:
+                    if check(c, mutants[f], k) == False:
                         # Apply the mutation if valid
                         mutants[f][k] = c
                         break  # Exit the loop after applying the mutation
@@ -314,22 +316,27 @@ def check(p1, a1, k):
     if not PointValid(p1, a1, d):
         #print("Point is already exists GA, skipping.")  # Debugging statement for duplicates
         return True  # Return True to indicate this point is invalid (duplicate)
-    
-    if not Horz_check(a1[d - 1], p1):
-        #print("Horizontal check failed GA, skipping.")  # Debugging statement for horizontal check failure
-        return True  # Return True if horizontal check fails
 
-    # Check if the point lies on a valid line from the previous points
-    if not Trackpointlinevalid(a1[d - 1], p1, a1, d): 
-        #print("Line check failed GA, skipping.")  # Debugging statement for line check failure
-        return True  # Return True if line check fails
+    if not Dist(a1[d - 1], p1):
+        #print("Distance check failed GA, skipping.")  # Debugging statement for distance check failure
+        return True
     
     # If the point is not the first point, check if the previous points are valid vertically
     if d > 1:
         if not vertical_check(a1[d - 2], a1[d - 1], p1):
             #print("Vertical check failed GA, skipping.")
             return True  # Return True if vertical check fails
-        
+    
+    # Check if the point lies on a valid line from the previous points
+    if not Trackpointlinevalid(a1[d - 1], p1, a1, d): 
+        #print("Line check failed GA, skipping.")  # Debugging statement for line check failure
+        return True  # Return True if line check fails
+    
+    # Check if the point passes the horizontal validity check
+    if not Horz_check(a1[d - 1], p1):
+        #print("Horizontal check failed GA, skipping.")  # Debugging statement for horizontal check failure
+        return True  # Return True if horizontal check fails
+
     # Special case for the last track point, needs additional checks with the point after it
     if d == numtrackp or d == (len(a1) - 2):
         # Check if the vertical relationship between the last point and the next one is valid
@@ -344,17 +351,19 @@ def check(p1, a1, k):
         
         # Check if the horizontal relationship between the current point and the last point is valid
         if not Horz_check(p1, a1[-1]):
-           #print("Horizontal check failed GA, skipping.")  # Debugging statement for horizontal check failure
+            #print("Horizontal check failed GA, skipping.")  # Debugging statement for horizontal check failure
             return True  # Return True if horizontal check fails
     
     # If all checks pass, return False indicating the point is valid
     return False
 
 
-
+cost=[] #cost list to store the best fitness value of each generation
 
 def run():
-    global Output, cost
+    # Initialize an empty list to store output
+    Output = []
+
     # Generate obstacles and create the map for the simulation
     createobs(gridsize)
     createmap()

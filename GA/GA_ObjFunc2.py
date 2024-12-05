@@ -6,7 +6,7 @@ def func2(l,d):
         totaldanger = 0
         # Start and end index for the current drone's track points
         start_idx = i * (numtrackp + 2)  # Start index for current drone
-        end_idx = (i + 1) * (numtrackp + 2)  # End index for current drone (inclusive of the last point)
+        end_idx = start_idx + numtrackp  # End index for current drone (last track point)
 
         # Iterate through the track points of the current drone
         for j in range(start_idx, end_idx):  

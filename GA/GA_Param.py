@@ -5,7 +5,7 @@ import math  # Import math module for mathematical functions
 numdrones = 2   
 
 # Maximum permissible distance between drones (depends on controller accuracy)
-maxpdist = 5 
+maxpdist = 3 
 
 # Size of the grid (depends on the environment setup)
 gridsize = 10 
@@ -24,7 +24,7 @@ amax = 75 *np.pi/180  # Convert to radians
 bmax = 60 *np.pi/180  # Convert to radians
 
 # Number of generations in the simulation or optimization process
-numofgen = 100
+numofgen = 10
 
 # Number of parents selected for each generation (used in evolutionary algorithms)
 numparents = 4
@@ -33,7 +33,7 @@ numparents = 4
 numchildren = 2
 
 # Number of mutants (random variations) generated in each generation
-nummutants = 4
+nummutants = 6
 
 # Number of elite individuals selected for the next generation (best-performing)
 numelite = 1
@@ -75,6 +75,3 @@ elites = []
 
 # List to store mutants (randomly generated drones/solutions)
 mutants = []  
-
-#cost list to store the best fitness value of each generation
-cost=[] 
