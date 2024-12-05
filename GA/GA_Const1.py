@@ -25,4 +25,5 @@ def vertical_check(p1,p2,p3):
 
     if a>amax:
         return False
+    
     return True

@@ -5,7 +5,7 @@ import math  # Import math module for mathematical functions
 numdrones = 2   
 
 # Maximum permissible distance between drones (depends on controller accuracy)
-maxpdist = 3 
+maxpdist = 4 
 
 # Size of the grid (depends on the environment setup)
 gridsize = 10 
@@ -17,8 +17,8 @@ numtrackp = math.ceil((((((gridsize-0)**2)+((gridsize-0)**2)+((gridsize-0)**2))*
 # Safe distance between drones or obstacles
 dsafe = 2
 
-# Maximum Hotizontal angle (in radians)
-amax = 75 *np.pi/180  # Convert to radians
+# Maximum Horizontal angle (in radians)
+amax = 90 *np.pi/180  # Convert to radians
 
 # Maximum Vertical angle (in radians) 
 bmax = 60 *np.pi/180  # Convert to radians
@@ -30,13 +30,15 @@ numofgen = 10
 numparents = 4
 
 # Number of children generated in each generation
-numchildren = 2
+numchildren = 4
 
 # Number of mutants (random variations) generated in each generation
-nummutants = 6
+nummutants = 4
 
 # Number of elite individuals selected for the next generation (best-performing)
 numelite = 1
+
+penalty_factor=10
 
 def set_GA_params(n_drones, max_dist, safe_dist, gen, parents, children, mutants, elite):
     global numdrones, maxpdist, gridsize, dsafe, amax, bmax, numofgen, numparents, numchildren, nummutants, numelite

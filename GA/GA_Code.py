@@ -9,10 +9,11 @@ from GA.GA_Const1 import *  # Import constants related to the simulation
 from GA.GA_Const2 import *  # Import additional constants
 from GA.GA_Const3 import *  # Import more constants
 from GA.GA_Const4 import Trackpointlinevalid  # Import function to validate track point lines
-from GA.GA_Const5 import *  # Import remaining constants
+from GA.GA_Const5 import *  # Import function to check distance constraint
 from GA.GA_Param import *  # Import data structures and variables
 from GA.GA_ObjFunc1 import *  # Import first objective function
 from GA.GA_ObjFunc2 import *  # Import second objective function
+from GA.GA_ObjFunc3 import *  # Import second objective function
 from GA.GA_CreateMap import *  # Import function to create the map
 import matplotlib.pyplot as plt  # Import matplotlib for plotting
 from mpl_toolkits.mplot3d import Axes3D  # Import 3D plotting toolkit
@@ -179,17 +180,17 @@ def fittest():
         # Calculate x and y values for the i-th child using func1 and func2
         x = func1(i, children)  # This function returns distance values for the i-th child
         y = func2(i, children)  # This function returns danger values for the i-th child
-
+        z = func3(i, children)  # This function returns penalty values for the i-th child
         # Calculate the total distance by summing the x values
         total_dist = sum(x)
 
         # Calculate the total danger by summing the y values
         total_danger = sum(y)
-
+        
+        total_penalty = sum(z)
         # Append the sum of total distance and total danger to the fitness list
-        fitness.append(total_dist + total_danger)
+        fitness.append(total_dist + total_danger+ total_penalty)
 
-import itertools
 
 # Function to generate all combinations of (x, y, z) by applying offsets
 def generate_combinations(original_xyz, offsets):
@@ -245,7 +246,7 @@ def mutation():
                 x1, y1, z1 = mutants[f][k]
 
                 # Define possible offsets to mutate the position
-                offset = [-7, -6, -5, -4, -3, 3, 4, 5, 6, 7]
+                offset = [-7, -6, -5, -4, -3,-2,-1, 1, 2, 3, 4, 5, 6, 7]
 
                 # Generate all possible combinations of mutated coordinates based on offsets
                 combinations = generate_combinations((x1, y1, z1), offset)                
@@ -311,16 +312,16 @@ def check(p1, a1, k):
     if x < 0 or x > gridsize or y < 0 or y > gridsize or z < 0 or z > gridsize:
         #print("Point is out of bounds GA, skipping.")  # Debugging statement for out of bounds 
         return True  # Return True to indicate this point is invalid (out of bounds)
-    
+
     # Check if the point already exists in the list (duplicates)
     if not PointValid(p1, a1, d):
         #print("Point is already exists GA, skipping.")  # Debugging statement for duplicates
         return True  # Return True to indicate this point is invalid (duplicate)
-
-    if not Dist(a1[d - 1], p1):
-        #print("Distance check failed GA, skipping.")  # Debugging statement for distance check failure
-        return True
     
+    if not dist(a1[d - 1], p1):
+        #print("Distance check failed GA, skipping.")  # Debugging statement for distance check failure
+        return True  # Return True if distance check fails
+
     # If the point is not the first point, check if the previous points are valid vertically
     if d > 1:
         if not vertical_check(a1[d - 2], a1[d - 1], p1):
@@ -343,6 +344,7 @@ def check(p1, a1, k):
         if not vertical_check(a1[d - 1], p1, a1[-1]):
             #print("Vertical check failed GA, skipping.")
             return True  # Return True if vertical check fails
+
         
         # Check if the line between the current point and the last point is valid
         if not Trackpointlinevalid(p1, a1[-1], a1, d):

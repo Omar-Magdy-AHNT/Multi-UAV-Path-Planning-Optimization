@@ -9,9 +9,11 @@ from SA.SA_Const1 import *  # Import constants related to the simulation
 from SA.SA_Const2 import *  # Import additional constants
 from SA.SA_Const3 import *  # Import more constants
 from SA.SA_Const4 import *  # Import function to validate track point lines
+from SA.SA_Const5 import *  # Import more constants
 from SA.SA_Param import *  # Import data structures and variables
 from SA.SA_ObjFunc1 import *  # Import first objective function
-from SA.SA_ObjFunc2 import *  # Import second objective function
+from SA.SA_ObjFunc2 import *  # Import second objective 
+from SA.SA_ObjFunc3 import *  # Import second objective function
 import math  # Import math module for mathematical functions
 from SA.SA_CreateMap import *  # Import function to create the map
 import matplotlib.pyplot as plt  # Import matplotlib for plotting
@@ -44,11 +46,14 @@ def generate_possible_points(x, y, z):
 def objective():
     distDrone.clear()  # Clear the distance list
     danger.clear()  # Clear the danger list
+    penalty.clear()  # Clear the penalty list
     func1()  # Calculate distances (function defined elsewhere)
-    func2()  # Calculate dangers (function defined elsewhere)
+    func2()
+    func3()  # Calculate dangers (function defined elsewhere)
     total_distance = sum(distDrone)  # Sum up total distances
     total_danger = sum(danger)  # Sum up total dangers
-    obj = total_distance + total_danger  # Combine distances and dangers to form objective
+    total_penalty = sum(penalty)  # Sum up total penalties
+    obj = total_distance + total_danger+ total_penalty  # Combine distances and dangers to form objective
     return obj  # Return the objective value
 
 # Function to generate a new solution
@@ -83,6 +88,11 @@ def newsolution():
             # Check if the generated point is already in Droneinfo
             if (xn, yn, zn) in Droneinfo:
                 print("Point is already in Droneinfo SA, skipping.")  # Debugging statement for duplicates
+                possible_points.remove((xn, yn, zn))  # Remove the invalid point
+                continue  # Skip this iteration
+            
+            if not dist(Droneinfo[g - 1], (xn, yn, zn)) and not dist((xn, yn, zn), Droneinfo[g + 1]):
+                print("Distance constraint failed SA, skipping.")
                 possible_points.remove((xn, yn, zn))  # Remove the invalid point
                 continue  # Skip this iteration
 

@@ -2,7 +2,7 @@ from GA.GA_Const1 import *  # Import constants related to the simulation
 from GA.GA_Const2 import *  # Import additional constants
 from GA.GA_Const3 import *  # Import more constants
 from GA.GA_Const4 import Trackpointlinevalid  # Import function to validate track points
-from GA.GA_Const5 import *  # Import remaining constants
+from GA.GA_Const5 import *  # Import function to check distance constraint
 from GA.GA_Param import *  # Import data structures and variables
 import random  # Import random module
 
@@ -14,9 +14,6 @@ def generate_integer_points(grid_size):
                 points.append((x, y, z))
     return points
 
-# Example usage
-grid_size = 10
-all_points = generate_integer_points(grid_size)
 
 # Function to create obstacles in the simulation grid
 def createobs(gridsize):
@@ -63,6 +60,11 @@ def createmap():
                     print("Point is already invalid, skipping.")  # Debugging statement for duplicates
                     possible_points.remove((x, y, z))  # Remove the point from possible points
                     continue  # Skip to the next iteration
+                
+                if not dist(children[k][-1], (x, y, z)):
+                    print("Distance constraint failed, skipping.")
+                    possible_points.remove((x, y, z))
+                    continue
 
                 # Check for horizontal constraints if applicable
                 if not Horz_check(children[k][-1], (x, y, z)):

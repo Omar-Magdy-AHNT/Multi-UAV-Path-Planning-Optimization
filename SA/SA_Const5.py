@@ -1,5 +1,5 @@
 import numpy as np
-from GA.GA_Param import *
+from SA.SA_Param import *
 
 def dist(p1, p2):
 

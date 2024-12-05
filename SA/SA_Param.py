@@ -5,7 +5,7 @@ import math  # Import math module for mathematical functions
 numdrones = 2   # depends on the number of drones
 
 # Maximum point distance, which might represent the accuracy of the controller
-maxpdist = 2  # depends on the controller accuracy 
+maxpdist = 4  # depends on the controller accuracy 
 
 # Grid size for the simulation or optimization task
 gridsize = 10  # depends on the size of the grid
@@ -39,6 +39,8 @@ tn = 1000  # Higher initial temperature
 # Number of new solutions to generate per iteration
 nt = 2  # Increase number of new solutions to generate per iteration
 
+penalty_factor=10
+
 def set_SA_params(n_drones, max_dist, safe_dist, max_iter, final_temp, cool_rate, init_temp, new_solutions):
     global numdrones, maxpdist, gridsize, dsafe, amax, bmax,tf, imax, alpha, tn, nt
     numdrones = n_drones
@@ -69,4 +71,4 @@ endpoint = []
 
 # List to store the distances between drones
 distDrone = []
-p = []
+penalty = []

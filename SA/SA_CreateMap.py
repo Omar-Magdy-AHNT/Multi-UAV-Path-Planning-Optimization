@@ -2,6 +2,7 @@ from SA.SA_Const1 import *  # Import constants related to the simulation
 from SA.SA_Const2 import *  # Import additional constants
 from SA.SA_Const3 import *  # Import more constants
 from SA.SA_Const4 import Trackpointlinevalid  # Import function to validate track points
+from SA.SA_Const5 import *  # Import more constants
 from SA.SA_Param import *  # Import data structures and variables
 import random  # Import random module for random number generation
 
@@ -64,6 +65,10 @@ def createmap():
                 print("Point is already in Droneinfo, skipping.")  # Debugging statement for duplicates
                 possible_points.remove((x, y, z))  # Remove the point from possible points
                 continue  # Skip to the next iteration
+            
+            if not dist(Droneinfo[-1], (x, y, z)):
+                print("Distance constraint failed, skipping.")
+                possible_points.remove
 
             # Check for horizontal constraints if applicable
             if not Horz_check(Droneinfo[-1], (x, y, z)):
@@ -83,7 +88,6 @@ def createmap():
                 possible_points.remove((x, y, z))  # Remove the point from possible points
                 continue  # Skip to the next iteration
             
-
 
             # If all checks pass, add the point to the drone's information
             Droneinfo.append((x, y, z))  # Add the new track point to Droneinfo
