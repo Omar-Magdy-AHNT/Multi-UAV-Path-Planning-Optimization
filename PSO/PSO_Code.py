@@ -10,30 +10,33 @@ from PSO.PSO_Const1 import *
 from PSO.PSO_Const2 import *
 from PSO.PSO_Const3 import *
 from PSO.PSO_Const4 import *
+from PSO.PSO_Const5 import *
 from PSO.PSO_ObjFunc1 import *
 from PSO.PSO_ObjFunc2 import *
+from PSO.PSO_ObjFunc3 import *
 import matplotlib.pyplot as plt
 import numpy as np
-import math
+from itertools import product
 
 def GFittness():
-    global Global_Fitness,Personal_Fitness
+    global Global_Fitness,Personal_Fitness,global_path
     Global_Fitness = min(Personal_Fitness)
+    global_path = Birds[Personal_Fitness.index(Global_Fitness)].copy()
 
 
 def fits(i):
     # Calculate x and y values for the i-th child using func1 and func2
     x = func1(i, Birds)  # This function returns distance values for the i-th child
     y = func2(i, Birds)  # This function returns danger values for the i-th child
-
+    z = func3(i, Birds)
     # Calculate the total distance by summing the x values
     total_dist = sum(x)
 
     # Calculate the total danger by summing the y values
     total_danger = sum(y)
-
+    total_penalty = sum(z)
     # Append the sum of total distance and total danger to the fitness list
-    fit = total_dist + total_danger
+    fit = total_dist + total_danger + total_penalty
     return fit
 
 def PFittness():
@@ -42,8 +45,10 @@ def PFittness():
         fit = fits(i)
         if Personal_Fitness[i] == 0:
             Personal_Fitness[i] = fit
+            personal_path[i] = Birds[i].copy()
         elif fit < Personal_Fitness[i]:
             Personal_Fitness[i] = fit
+            personal_path[i] = Birds[i].copy()
 
 def check(point,ai,i):
     x = point[0]
@@ -52,89 +57,99 @@ def check(point,ai,i):
     A = Birds[ai]
     # Check if the point is within the valid grid size
     if x < 0 or x > gridsize or y < 0 or y > gridsize or z < 0 or z > gridsize:
-        #print("Point is out of bounds GA, skipping.")  # Debugging statement for out of bounds 
+        #print("Point is out of bounds PSO, skipping.")  # Debugging statement for out of bounds 
         return True  # Return True to indicate this point is invalid (out of bounds)
     
     if not PointValid(point, A, i):
-        #print("Point is already exists GA, skipping.")  # Debugging statement for duplicates
+        #print("Point is already exists PSO, skipping.")  # Debugging statement for duplicates
         return True  # Return True to indicate this point is invalid (duplicate)
     
+    if not dist(A[i - 1], point):
+        #print("Distance check failed PSO, skipping.")  # Debugging statement for distance check failure
+        return True  # Return True if distance check fails
+
     if not Horz_check(A[i - 1], point):
-        #print("Horizontal check failed GA, skipping.")  # Debugging statement for horizontal check failure
+        #print("Horizontal check failed PSO, skipping.")  # Debugging statement for horizontal check failure
         return True  # Return True if horizontal check fails
 
     # Check if the point lies on a valid line from the previous points
     if not Trackpointlinevalid(A[i - 1], point, A, i): 
-        #print("Line check failed GA, skipping.")  # Debugging statement for line check failure
+        #print("Line check failed PSO, skipping.")  # Debugging statement for line check failure
         return True  # Return True if line check fails
     
     if i > 1:
         if not vertical_check(A[i - 2], A[i - 1], point):
-            #print("Vertical check failed GA, skipping.")
+            #print("Vertical check failed PSO, skipping.")
             return True  # Return True if vertical check fails
     
     if i == numtrackp or i == (len(A) - 2):
         # Check if the vertical relationship between the last point and the next one is valid
         if not vertical_check(A[i - 1], point, A[-1]):
-            #print("Vertical check failed GA, skipping.")
+            #print("Vertical check failed PSO, skipping.")
             return True  # Return True if vertical check fails
         
         # Check if the line between the current point and the last point is valid
         if not Trackpointlinevalid(point, A[-1], A, i):
-            #print("Line check failed GA, skipping.")  # Debugging statement for line check failure
+            #print("Line check failed PSO, skipping.")  # Debugging statement for line check failure
             return True  # Return True if line check fails
         
         # Check if the horizontal relationship between the current point and the last point is valid
         if not Horz_check(point, A[-1]):
-            #print("Horizontal check failed GA, skipping.")  # Debugging statement for horizontal check failure
+            #print("Horizontal check failed PSO, skipping.")  # Debugging statement for horizontal check failure
             return True  # Return True if horizontal check fails
     
     # If all checks pass, return False indicating the point is valid
     return False
 
-
-
-def calculate_all_velocities(w, c1, c2, velocity, personal_fitness, global_fitness, B, num_combinations):
-    r_values = np.linspace(0.6, 1, num_combinations)
-    r1, r2 = np.meshgrid(r_values, r_values)
-    r1_flat = r1.flatten()
-    r2_flat = r2.flatten()
-
+""" def compute_velocity(velocity, B, personal_fitness, global_fitness,r1,r2):
     velocities = []
-    for r1_val, r2_val in zip(r1_flat, r2_flat):
-        velocity_new = (
-            w * velocity
-            + c1 * r1_val * (personal_fitness - B)
-            + c2 * r2_val * (global_fitness - B)
+
+    # Iterate through all combinations of r1 and r2
+    for r1_val, r2_val in product(r1, r2):
+        # Calculate new velocities for x, y, z
+        velocity_new_x = (
+            wx * velocity[0]
+            + cx1 * r1_val * (personal_fitness[0] - B[0])
+            + cx2 * r2_val * (global_fitness[0] - B[0])
+        )
+        velocity_new_y = (
+            wy * velocity[1]
+            + cy1 * r1_val * (personal_fitness[1] - B[1])
+            + cy2 * r2_val * (global_fitness[1] - B[1])
+        )
+        velocity_new_z = (
+            wz * velocity[2]
+            + cz1 * r1_val * (personal_fitness[2] - B[2])
+            + cz2 * r2_val * (global_fitness[2] - B[2])
         )
         
-        # Apply velocity clamping to avoid excessively large velocity values
-        velocity_new = np.clip(velocity_new, -5, 5)
-        velocities.append(math.ceil(velocity_new))
+        # Store the results
+        velocities.append((velocity_new_x, velocity_new_y, velocity_new_z))
 
-    return np.array(velocities)
-
-
+    return velocities """
 
 def newsol():
     for i in range(numparticles):
-        B = fits(i)
-        vel = calculate_all_velocities(w, c1, c2, Velocity[i], Personal_Fitness[i], Global_Fitness, B, 30)
+
         for k in range(numdrones):
             start_idx = (k) * (numtrackp + 2) + 1
             end_idx = (k + 1) * (numtrackp + 2)
             for j in range(start_idx, end_idx - 1):
-                for v in vel:
-                    # Add velocity to the position
-                    px = Birds[i][j][0] + vel[v]
-                    py = Birds[i][j][1] + vel[v]
-                    pz = Birds[i][j][2] + vel[v]
-                    Pu = (px, py, pz)
+                r1 = random.uniform(0, 1)
+                r2 = random.uniform(0, 1)
+                vx =wx * Velocity[i][2]+ cx1 * r1 * (personal_path[i][j][2] - Birds[i][j][2])+ cx2 * r2 * (global_path[j][2] -  Birds[i][j][2])
+                vy =wy * Velocity[i][2]+ cy1 * r1 * (personal_path[i][j][2] - Birds[i][j][2])+ cy2 * r2 * (global_path[j][2] -  Birds[i][j][2])
+                vz = wz * Velocity[i][2]+ cz1 * r1 * (personal_path[i][j][2] - Birds[i][j][2])+ cz2 * r2 * (global_path[j][2] -  Birds[i][j][2])
+                # Add velocity to the position
+                px = Birds[i][j][0] + vx
+                py = Birds[i][j][1] + vy
+                pz = Birds[i][j][2] + vz
+                Pu = (px, py, pz)
 
-                    if not check(Pu, i, j + 1):
-                        Birds[i][j] = Pu
-                        Velocity[i] = vel[v]
-                        break
+                if not check(Pu, i, j + 1):
+                    Birds[i][j] = Pu
+                    Velocity[i] = (vx, vy, vz)
+                    break
 
 
 # Function to plot the drone paths and obstacles in 3D
@@ -185,15 +200,18 @@ def run():
     GFittness()
     cost.append(Global_Fitness)
     for i in range(maxiter):
+        print("Iteration: ", i)
         newsol()
         PFittness()
         GFittness()
+        print("Best fitness value: ", Global_Fitness)  # Print the best fitness value of the current generation
+        print("Best Bird: ", global_path)  # Print the best individual of the current generation
         cost.append(Global_Fitness)
-    BestBird = Birds[Personal_Fitness.index(Global_Fitness)].copy()
+    BestBird = global_path
     return BestBird, Global_Fitness
 
 # Only run the following code when this file is executed directly
 if __name__ == "__main__":
-    Output, bestobjective = run()  # Run the ant colony algorithm
+    Output, bestobjective = run()  # Run the PSO algorithm 
     plt.plot(cost)  # Plot the cost history over iterations
     plot_map(Output, obstlist, numdrones, numtrackp, gridsize)  # Plot the final drone paths and obstacles

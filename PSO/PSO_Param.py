@@ -25,9 +25,16 @@ bmax = 60 *np.pi/180  # Convert to radians
 
 numparticles = 50 # Number of particles in the swarm
 
-w = 0.792
-c1 = 1.9
-c2 = 1.5  
+wx = 0.792
+wy = 0.792
+wz = 0.792
+
+cx1 = 1.9
+cy1 = 1.9
+cz1 = 1.9
+cx2 = 1.5  
+cy2 = 1.5  
+cz2 = 1.5  
 
 maxiter = 10 # Maximum number of iterations
 
@@ -50,11 +57,15 @@ Birds = [[] for _ in range(numparticles)]  # List to store the particles in the 
 # Initialize the global best fitness of the swarm
 Global_Fitness = []  
 
+global_path = []  # List to store the global best path of the swarm
+
 # Initialize the personal best fitness of each particle
 Personal_Fitness = [0 for _ in range(numparticles)]
 
+personal_path = [[] for _ in range(numparticles)]  # List to store the personal best path of each particle
+
 # Initialize the velocity of each particle to zero
-Velocity = [ 1 for _ in range(numparticles)]  # List to store the velocity of each particle
+Velocity = [ (1,1,1) for _ in range(numparticles)]  # List to store the velocity of each particle
 
 # Output list to store the results of the simulation
 Output = []
