@@ -23,18 +23,18 @@ amax = 75 *np.pi/180  # Convert to radians
 # Maximum Vertical angle (in radians) 
 bmax = 60 *np.pi/180  # Convert to radians
 
-numparticles = 20 # Number of particles in the swarm
+numparticles = 50 # Number of particles in the swarm
 
 wx = 0.792
 wy = 0.792
 wz = 0.792
 
-cx1 = 1.9
-cy1 = 1.9
-cz1 = 1.9
-cx2 = 1.5  
-cy2 = 1.5  
-cz2 = 1.5  
+cx1 = 2
+cy1 = 2
+cz1 = 1
+cx2 = 1.26  
+cy2 = 1.49 
+cz2 = 1  
 
 maxiter = 10 # Maximum number of iterations
 

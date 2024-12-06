@@ -49,7 +49,6 @@ def PFittness():
             personal_path[i] = Birds[i].copy()
 
 def check(point,ai,i):
-
     x = point[0]
     y = point[1]
     z = point[2]
@@ -63,9 +62,9 @@ def check(point,ai,i):
         #print("Point is already exists PSO, skipping.")  # Debugging statement for duplicates
         return True  # Return True to indicate this point is invalid (duplicate)
     
-    if not dist(A[i - 1], point):
-        #print("Distance check failed PSO, skipping.")  # Debugging statement for distance check failure
-        return True  # Return True if distance check fails
+    # if not dist(A[i - 1], point):
+    #     #print("Distance check failed PSO, skipping.")  # Debugging statement for distance check failure
+    #     return True  # Return True if distance check fails
 
     if not Horz_check(A[i - 1], point):
         #print("Horizontal check failed PSO, skipping.")  # Debugging statement for horizontal check failure
@@ -100,31 +99,46 @@ def check(point,ai,i):
     # If all checks pass, return False indicating the point is valid
     return False
 
+
+def calculate_vx_vy_vz( Velocity, personal_path, Birds, global_path, num_points):
+    # Create 20 equally spaced values between 0 and 1 for r1 and r2
+    r1_values = np.linspace(0, 1, num_points)
+    r2_values = np.linspace(0, 1, num_points)
+    
+    # List to store the results
+    results = []
+    
+    # Iterate over all combinations of r1 and r2
+    for r1 in r1_values:
+        for r2 in r2_values:
+            # Calculate vx, vy, vz for the current r1, r2 combination
+            vx =(wx * Velocity[0] + cx1 * r1 * (personal_path[0] - Birds[0]) + cx2 * r2 * (global_path[0] - Birds[0]))
+            vy = (wy * Velocity[1] + cy1 * r1 * (personal_path[1] - Birds[1]) + cy2 * r2 * (global_path[1] - Birds[1]))
+            vz = (wz * Velocity[2] + cz1 * r1 * (personal_path[2] - Birds[2]) + cz2 * r2 * (global_path[2] - Birds[2]))
+            
+            # Append the result to the list
+            results.append((math.ceil(vx),math.ceil(vy), math.ceil(vz)))
+            results.append((int(vx),int(vy), int(vz)))
+    
+    return results
+
 def newsol():
     for i in range(numparticles):
         for k in range(numdrones):
-            gc.collect()
             start_idx = (k) * (numtrackp + 2) + 1
             end_idx = (k + 1) * (numtrackp + 2)
-            print("numdrones: ", k)
             for j in range(start_idx, end_idx - 1):
-                print("point: ", j)
-                r1 = random.uniform(0, 1)
-                r2 = random.uniform(0, 1)
-
-                vx = math.ceil(wx * Velocity[i][2] + cx1 * r1 * (personal_path[i][j][2] - Birds[i][j][2]) + cx2 * r2 * (global_path[j][2] - Birds[i][j][2]))
-                vy = math.ceil(wy * Velocity[i][2] + cy1 * r1 * (personal_path[i][j][2] - Birds[i][j][2]) + cy2 * r2 * (global_path[j][2] - Birds[i][j][2]))
-                vz = math.ceil(wz * Velocity[i][2] + cz1 * r1 * (personal_path[i][j][2] - Birds[i][j][2]) + cz2 * r2 * (global_path[j][2] - Birds[i][j][2]))
-
-                # Add velocity to the position
-                px = Birds[i][j][0] + vx
-                py = Birds[i][j][1] + vy
-                pz = Birds[i][j][2] + vz
-                Pu = (px, py, pz)
-                
-                if not check(Pu, i, j):
-                    Birds[i][j] = Pu
-                    Velocity[i] = (vx, vy, vz)
+                vel = calculate_vx_vy_vz(Velocity[i], personal_path[i][j], Birds[i][j], global_path[j], 20)
+                for v in vel:
+                    vx, vy, vz = v
+                    px = Birds[i][j][0] + vx
+                    py = Birds[i][j][1] + vy
+                    pz = Birds[i][j][2] + vz
+                    Pu = (px, py, pz)
+                    if not check(Pu, i, j):
+                        Birds[i][j] = Pu
+                        Velocity[i] = (vx, vy, vz)
+                        break
                     
 def plot_map(Droneinfo, obstlist, numdrones, numtrackp, gridsize):
     fig = plt.figure()  # Create a new figure

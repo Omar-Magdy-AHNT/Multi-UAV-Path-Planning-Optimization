@@ -2,6 +2,7 @@ from PSO.PSO_Const1 import *  # Import constants related to the simulation  # no
 from PSO.PSO_Const2 import *  # Import additional constants  # noqa: F403
 from PSO.PSO_Const3 import *  # Import more constants  # noqa: F403
 from PSO.PSO_Const4 import Trackpointlinevalid  # Import function to validate track points  # Import remaining constants  # noqa: F403
+from PSO.PSO_Const5 import *  # Import more constants  # noqa: F403
 from PSO.PSO_Param import *  # Import data structures and variables  # noqa: F403
 import random  # Import random module
 
@@ -62,6 +63,11 @@ def createmap():
                     print("Point is already invalid, skipping.")  # Debugging statement for duplicates
                     possible_points.remove((x, y, z))  # Remove the point from possible points
                     continue  # Skip to the next iteration
+                
+                # if not dist(Birds[k][-1], (x, y, z)):  
+                #     print("Distance check failed, skipping.")
+                #     possible_points.remove((x, y, z))
+                #     continue
 
                 # Check for horizontal constraints if applicable
                 if not Horz_check(Birds[k][-1], (x, y, z)):  # noqa: F405
