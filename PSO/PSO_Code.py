@@ -1,5 +1,8 @@
 import sys
 import os
+from memory_profiler import profile
+import gc
+import math
 
 # Add the root directory of your project to the sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -16,23 +19,18 @@ from PSO.PSO_ObjFunc2 import *
 from PSO.PSO_ObjFunc3 import *
 import matplotlib.pyplot as plt
 import numpy as np
-from itertools import product
 
 def GFittness():
     global Global_Fitness,Personal_Fitness,global_path
     Global_Fitness = min(Personal_Fitness)
     global_path = Birds[Personal_Fitness.index(Global_Fitness)].copy()
 
-
 def fits(i):
     # Calculate x and y values for the i-th child using func1 and func2
     x = func1(i, Birds)  # This function returns distance values for the i-th child
     y = func2(i, Birds)  # This function returns danger values for the i-th child
     z = func3(i, Birds)
-    # Calculate the total distance by summing the x values
     total_dist = sum(x)
-
-    # Calculate the total danger by summing the y values
     total_danger = sum(y)
     total_penalty = sum(z)
     # Append the sum of total distance and total danger to the fitness list
@@ -51,6 +49,7 @@ def PFittness():
             personal_path[i] = Birds[i].copy()
 
 def check(point,ai,i):
+
     x = point[0]
     y = point[1]
     z = point[2]
@@ -101,58 +100,32 @@ def check(point,ai,i):
     # If all checks pass, return False indicating the point is valid
     return False
 
-""" def compute_velocity(velocity, B, personal_fitness, global_fitness,r1,r2):
-    velocities = []
-
-    # Iterate through all combinations of r1 and r2
-    for r1_val, r2_val in product(r1, r2):
-        # Calculate new velocities for x, y, z
-        velocity_new_x = (
-            wx * velocity[0]
-            + cx1 * r1_val * (personal_fitness[0] - B[0])
-            + cx2 * r2_val * (global_fitness[0] - B[0])
-        )
-        velocity_new_y = (
-            wy * velocity[1]
-            + cy1 * r1_val * (personal_fitness[1] - B[1])
-            + cy2 * r2_val * (global_fitness[1] - B[1])
-        )
-        velocity_new_z = (
-            wz * velocity[2]
-            + cz1 * r1_val * (personal_fitness[2] - B[2])
-            + cz2 * r2_val * (global_fitness[2] - B[2])
-        )
-        
-        # Store the results
-        velocities.append((velocity_new_x, velocity_new_y, velocity_new_z))
-
-    return velocities """
-
 def newsol():
     for i in range(numparticles):
-
         for k in range(numdrones):
+            gc.collect()
             start_idx = (k) * (numtrackp + 2) + 1
             end_idx = (k + 1) * (numtrackp + 2)
+            print("numdrones: ", k)
             for j in range(start_idx, end_idx - 1):
+                print("point: ", j)
                 r1 = random.uniform(0, 1)
                 r2 = random.uniform(0, 1)
-                vx =wx * Velocity[i][2]+ cx1 * r1 * (personal_path[i][j][2] - Birds[i][j][2])+ cx2 * r2 * (global_path[j][2] -  Birds[i][j][2])
-                vy =wy * Velocity[i][2]+ cy1 * r1 * (personal_path[i][j][2] - Birds[i][j][2])+ cy2 * r2 * (global_path[j][2] -  Birds[i][j][2])
-                vz = wz * Velocity[i][2]+ cz1 * r1 * (personal_path[i][j][2] - Birds[i][j][2])+ cz2 * r2 * (global_path[j][2] -  Birds[i][j][2])
+
+                vx = math.ceil(wx * Velocity[i][2] + cx1 * r1 * (personal_path[i][j][2] - Birds[i][j][2]) + cx2 * r2 * (global_path[j][2] - Birds[i][j][2]))
+                vy = math.ceil(wy * Velocity[i][2] + cy1 * r1 * (personal_path[i][j][2] - Birds[i][j][2]) + cy2 * r2 * (global_path[j][2] - Birds[i][j][2]))
+                vz = math.ceil(wz * Velocity[i][2] + cz1 * r1 * (personal_path[i][j][2] - Birds[i][j][2]) + cz2 * r2 * (global_path[j][2] - Birds[i][j][2]))
+
                 # Add velocity to the position
                 px = Birds[i][j][0] + vx
                 py = Birds[i][j][1] + vy
                 pz = Birds[i][j][2] + vz
                 Pu = (px, py, pz)
-
-                if not check(Pu, i, j + 1):
+                
+                if not check(Pu, i, j):
                     Birds[i][j] = Pu
                     Velocity[i] = (vx, vy, vz)
-                    break
-
-
-# Function to plot the drone paths and obstacles in 3D
+                    
 def plot_map(Droneinfo, obstlist, numdrones, numtrackp, gridsize):
     fig = plt.figure()  # Create a new figure
     ax = fig.add_subplot(111, projection='3d')  # Add a 3D subplot
@@ -190,8 +163,6 @@ def plot_map(Droneinfo, obstlist, numdrones, numtrackp, gridsize):
     plt.legend()  # Display the legend
     plt.show()  # Show the plot
 
-
-
 def run():
     global cost
     createobs(gridsize)
@@ -210,7 +181,6 @@ def run():
     BestBird = global_path
     return BestBird, Global_Fitness
 
-# Only run the following code when this file is executed directly
 if __name__ == "__main__":
     Output, bestobjective = run()  # Run the PSO algorithm 
     plt.plot(cost)  # Plot the cost history over iterations

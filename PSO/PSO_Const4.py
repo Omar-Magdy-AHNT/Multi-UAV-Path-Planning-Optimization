@@ -1,21 +1,20 @@
 from PSO.PSO_Param import *
 
 def Trackpointlinevalid(p1,p2,x,ind): ##get points between each 2 track points to make sure no objects in between
+
     pl = bresenham_3d(p1,p2)
     for i in range(len(obstlist)-1):
         if obstlist[i] in pl:
             return False
-    for i in range(ind):
+    for i in range(ind+1):
         if x[i] in pl:
             return False
     return True
 
 def bresenham_3d(p1, p2):
-    # List to store the intermediate points on the line
-    points = []
+    # Using a generator to yield points one-by-one
     x1, y1, z1 = p1
     x2, y2, z2 = p2
-    
     # Differences
     dx = abs(x2 - x1)
     dy = abs(y2 - y1)
@@ -30,7 +29,8 @@ def bresenham_3d(p1, p2):
     if dx >= dy and dx >= dz:        # x is the major axis
         err_1 = 2 * dy - dx
         err_2 = 2 * dz - dx
-        while x1 != x2 - sx:  # Stop before reaching x2
+        while x1 != x2:  # Stop when x1 reaches x2
+            yield (x1, y1, z1)  # Points are already integers
             x1 += sx
             if err_1 >= 0:
                 y1 += sy
@@ -40,11 +40,11 @@ def bresenham_3d(p1, p2):
                 err_2 -= 2 * dx
             err_1 += 2 * dy
             err_2 += 2 * dz
-            points.append((x1, y1, z1))  # Add intermediate points only
     elif dy >= dx and dy >= dz:      # y is the major axis
         err_1 = 2 * dx - dy
         err_2 = 2 * dz - dy
-        while y1 != y2 - sy:  # Stop before reaching y2
+        while y1 != y2:  # Stop when y1 reaches y2
+            yield (x1, y1, z1)  # Points are already integers
             y1 += sy
             if err_1 >= 0:
                 x1 += sx
@@ -54,11 +54,11 @@ def bresenham_3d(p1, p2):
                 err_2 -= 2 * dy
             err_1 += 2 * dx
             err_2 += 2 * dz
-            points.append((x1, y1, z1))  # Add intermediate points only
     else:                            # z is the major axis
         err_1 = 2 * dx - dz
         err_2 = 2 * dy - dz
-        while z1 != z2 - sz:  # Stop before reaching z2
+        while z1 != z2:  # Stop when z1 reaches z2
+            yield (x1, y1, z1)  # Points are already integers
             z1 += sz
             if err_1 >= 0:
                 x1 += sx
@@ -68,6 +68,3 @@ def bresenham_3d(p1, p2):
                 err_2 -= 2 * dz
             err_1 += 2 * dx
             err_2 += 2 * dy
-            points.append((x1, y1, z1))  # Add intermediate points only
-
-    return points
