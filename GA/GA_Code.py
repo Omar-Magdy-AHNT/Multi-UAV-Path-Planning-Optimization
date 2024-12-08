@@ -314,13 +314,13 @@ def check(p1, a1, k):
         return True  # Return True to indicate this point is invalid (out of bounds)
 
     # Check if the point already exists in the list (duplicates)
-    if not PointValid(p1, a1, d):
+    if not PointValid(p1, a1, d+1):
         #print("Point is already exists GA, skipping.")  # Debugging statement for duplicates
         return True  # Return True to indicate this point is invalid (duplicate)
     
-    if not dist(a1[d - 1], p1):
-        #print("Distance check failed GA, skipping.")  # Debugging statement for distance check failure
-        return True  # Return True if distance check fails
+    # if not dist(a1[d - 1], p1):
+    #     #print("Distance check failed GA, skipping.")  # Debugging statement for distance check failure
+    #     return True  # Return True if distance check fails
 
     # If the point is not the first point, check if the previous points are valid vertically
     if d > 1:

@@ -30,11 +30,11 @@ wy = 0.792
 wz = 0.792
 
 cx1 = 2
-cy1 = 2
-cz1 = 1
-cx2 = 1.26  
-cy2 = 1.49 
-cz2 = 1  
+cy1 = 2.3
+cz1 = 0.7
+cx2 = 1  
+cy2 = 1.1 
+cz2 = 0.7  
 
 maxiter = 10 # Maximum number of iterations
 

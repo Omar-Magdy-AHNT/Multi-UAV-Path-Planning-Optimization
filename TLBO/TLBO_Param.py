@@ -23,13 +23,31 @@ amax = 75 *np.pi/180  # Convert to radians
 # Maximum Vertical angle (in radians) 
 bmax = 60 *np.pi/180  # Convert to radians
 
+TeachFactor = 1 # Teaching factor
 
-def set_ACO_params(n_drones, max_dist, safe_dist, ):
-    global numdrones, maxpdist, gridsize, dsafe, amax, bmax, 
+schooldays = 10 # Number of iterations
+
+numstudents = 50 # Number of students
+
+penalty_factor=10
+
+def set_TLBO_params(n_drones, max_dist, safe_dist, max_iter, teaching_factor,students):
+    global numdrones, maxpdist, gridsize, dsafe, amax, bmax,schooldays,TeachFactor ,numstudents
     numdrones = n_drones
     maxpdist = max_dist
     dsafe = safe_dist
+    TeachFactor = teaching_factor
+    schooldays = max_iter
+    numstudents = students
 
+# Initialize the Students
+Students = [[] for _ in range(numstudents)]  # List to store the Students
+
+# Initialize the ranking of the students
+Ranking = []  # List to store the fitness of the students
+
+# Initialize the mean rank of the students
+meanrank=0 # Mean fitness of the students
 
 # Output list to store the results of the simulation
 Output = []
@@ -42,3 +60,5 @@ startpoint = []
 
 # Ending point for the drones (coordinates or other relevant data)
 endpoint = []
+# List to store the cost history over iterations
+cost = []  

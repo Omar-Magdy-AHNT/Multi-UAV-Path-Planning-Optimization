@@ -61,10 +61,10 @@ def createmap():
                     possible_points.remove((x, y, z))  # Remove the point from possible points
                     continue  # Skip to the next iteration
                 
-                if not dist(children[k][-1], (x, y, z)):
-                    print("Distance constraint failed, skipping.")
-                    possible_points.remove((x, y, z))
-                    continue
+                # if not dist(children[k][-1], (x, y, z)):
+                #     print("Distance constraint failed, skipping.")
+                #     possible_points.remove((x, y, z))
+                #     continue
 
                 # Check for horizontal constraints if applicable
                 if not Horz_check(children[k][-1], (x, y, z)):

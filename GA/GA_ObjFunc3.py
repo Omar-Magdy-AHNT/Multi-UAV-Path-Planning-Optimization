@@ -30,8 +30,8 @@ def func3(i,Droneinfo):
                 total_penalty -= penalty_factor
             else:
                 v += 1
-                total_penalty += penalty_factor*v*j
-                
+                total_penalty += penalty_factor*v*j         
+            
             # Calculate distance between current and previous point
             distance = np.linalg.norm(np.array(current_point) - np.array(next_point))
             
