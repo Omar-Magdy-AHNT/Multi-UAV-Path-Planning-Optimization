@@ -7,12 +7,13 @@ def func3():
         # Start and end index for the current drone's track points
         start_idx = i * (numtrackp + 2)  # Start index for current drone
         end_idx = (i + 1) * (numtrackp +2)  # End index for current drone
-
+        v =0
         # Iterate through the track points of the current drone
         for j in range(start_idx, end_idx-1):  
             # Get the current and previous point
             current_point = Droneinfo[j]
             next_point = Droneinfo[j+1]
+            # Extract x, y (ignore z for this check)
             # Extract x, y (ignore z for this check)
             x, y, z = current_point
             next_x, next_y, next_z = next_point
@@ -24,9 +25,11 @@ def func3():
                 total_penalty += penalty_factor*(y - next_y)*j
 
             if z == next_z:
-                total_penalty -= penalty_factor*j
+                v= 0
+                total_penalty -= penalty_factor
             else:
-                total_penalty += penalty_factor
+                v += 1
+                total_penalty += penalty_factor*v*j         
             
             # Calculate distance between current and previous point
             distance = np.linalg.norm(np.array(current_point) - np.array(next_point))

@@ -16,6 +16,7 @@ def func3(i,Droneinfo):
             next_point = Droneinfo[i][j+1]
             
             # Extract x, y (ignore z for this check)
+            # Extract x, y (ignore z for this check)
             x, y, z = current_point
             next_x, next_y, next_z = next_point
             

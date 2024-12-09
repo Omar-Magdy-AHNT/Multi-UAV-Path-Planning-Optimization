@@ -68,54 +68,54 @@ def newsolution():
         possible_points = generate_possible_points(x, y, z)  # Generate possible points around current point
         while not flag:  # Loop until a valid new point is found
             if not possible_points:  # If no possible points left
-                print("No possible points left SA, skipping.")
+                #print("No possible points left SA, skipping.")
                 xn,yn,zn = Output[f]  # Keep the current point
                 break  # Break out of the loop
             xn, yn, zn = random.choice(possible_points)  # Randomly select a new point from possible points
             
             # Check if new point is within bounds
             if xn < 0 or xn > gridsize or yn < 0 or yn > gridsize or zn < 0 or zn > gridsize:
-                print("Point is out of bounds SA, skipping.")  # Debugging statement for out of bounds
+                #print("Point is out of bounds SA, skipping.")  # Debugging statement for out of bounds
                 possible_points.remove((xn, yn, zn))  # Remove the invalid point
                 continue  # Skip this iteration
             
             # Check if the generated point is in the obstacle list
             if (xn, yn, zn) in obstlist:
-                print("Point is an obstacle SA, skipping.")  # Debugging statement for obstacle
+                #print("Point is an obstacle SA, skipping.")  # Debugging statement for obstacle
                 possible_points.remove((xn, yn, zn))  # Remove the invalid point
                 continue  # Skip this iteration
             
             # Check if the generated point is already in Droneinfo
             if (xn, yn, zn) in Droneinfo:
-                print("Point is already in Droneinfo SA, skipping.")  # Debugging statement for duplicates
+                #print("Point is already in Droneinfo SA, skipping.")  # Debugging statement for duplicates
                 possible_points.remove((xn, yn, zn))  # Remove the invalid point
                 continue  # Skip this iteration
             
             if not dist(Droneinfo[g - 1], (xn, yn, zn)) and not dist((xn, yn, zn), Droneinfo[g + 1]):
-                print("Distance constraint failed SA, skipping.")
+                #print("Distance constraint failed SA, skipping.")
                 possible_points.remove((xn, yn, zn))  # Remove the invalid point
                 continue  # Skip this iteration
 
             # Check for horizontal constraints if applicable
             if not Horz_check(Droneinfo[g - 1], (xn, yn, zn)) and not Horz_check((xn, yn, zn),Droneinfo[g + 1]):
-                print("Horizontal check failed SA, skipping.")  # Debugging statement for horizontal check failure
+                #print("Horizontal check failed SA, skipping.")  # Debugging statement for horizontal check failure
                 possible_points.remove((xn, yn, zn))  # Remove the invalid point
                 continue  # Skip this iteration
 
             # Check for vertical constraints if applicable
             if g > (1 + (numtrackp + 2) * i) :
                 if not vertical_check(Droneinfo[g - 2], Droneinfo[g - 1], (xn, yn, zn)) and not vertical_check(Droneinfo[g - 1], (xn, yn, zn), Droneinfo[g + 1]):
-                    print("Vertical check failed SA, skipping.")  # Debugging statement for vertical check failure
+                    #print("Vertical check failed SA, skipping.")  # Debugging statement for vertical check failure
                     possible_points.remove((xn, yn, zn))  # Remove the invalid point
                     continue  # Skip this iteration
                 if g < (numtrackp + 2) * (i + 1) - 2:
                     if not vertical_check((xn, yn, zn), Droneinfo[g + 1], Droneinfo[g + 2]):
-                        print("Vertical check failed SA, skipping.")
+                        #print("Vertical check failed SA, skipping.")
                         possible_points.remove((xn, yn, zn))  # Remove the invalid point
                         continue # Skip this iteration
 
             if not Trackpointlinevalid(Droneinfo[g - 1], (xn, yn, zn)) and not Trackpointlinevalid((xn, yn, zn), Droneinfo[g + 1]):
-                print("Line check failed SA, skipping.")  # Debugging statement for line check failure
+                #print("Line check failed SA, skipping.")  # Debugging statement for line check failure
                 possible_points.remove((xn, yn, zn))  # Remove the invalid point
                 continue  # Skip this iteration
             
@@ -172,6 +172,8 @@ def SimulatedAnnealing():
 
         i += 1  # Increment iteration counter
         cost.append(best_objective)  # Store the best objective for this iteration
+        print('Best Objective:', best_objective)  # Print the best objective
+        print('Best Solution:', best_solution)  # Print the best solution
     # Return the best solution and its objective after all iterations
     return best_solution, best_objective
 

@@ -314,7 +314,7 @@ def check(p1, a1, k):
         return True  # Return True to indicate this point is invalid (out of bounds)
 
     # Check if the point already exists in the list (duplicates)
-    if not PointValid(p1, a1, d+1):
+    if not PointValid(p1, a1):
         #print("Point is already exists GA, skipping.")  # Debugging statement for duplicates
         return True  # Return True to indicate this point is invalid (duplicate)
     

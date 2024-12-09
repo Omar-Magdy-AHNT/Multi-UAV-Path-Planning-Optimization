@@ -59,7 +59,7 @@ def createmap():
                 x, y, z = random.choice(possible_points)  # Randomly select a new point from possible points
 
                 # Check if the generated point is in the obstacle list
-                if not PointValid((x, y, z), Birds[k], len(Birds[k])):  # noqa: F405
+                if not PointValid((x, y, z), Birds[k]):  # noqa: F405
                     print("Point is already invalid, skipping.")  # Debugging statement for duplicates
                     possible_points.remove((x, y, z))  # Remove the point from possible points
                     continue  # Skip to the next iteration

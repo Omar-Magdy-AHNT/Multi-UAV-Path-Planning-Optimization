@@ -59,15 +59,15 @@ def createmap():
                 x, y, z = random.choice(possible_points)  # Randomly select a new point from possible points
 
                 # Check if the generated point is in the obstacle list
-                if not PointValid((x, y, z), Students[k], len(Students[k])):  # noqa: F405
+                if not PointValid((x, y, z), Students[k]):  # noqa: F405
                     print("Point is already invalid, skipping.")  # Debugging statement for duplicates
                     possible_points.remove((x, y, z))  # Remove the point from possible points
                     continue  # Skip to the next iteration
                 
-                # if not dist(Students[k][-1], (x, y, z)):  
-                #     print("Distance check failed, skipping.")
-                #     possible_points.remove((x, y, z))
-                #     continue
+                if not dist(Students[k][-1], (x, y, z)):  
+                    print("Distance check failed, skipping.")
+                    possible_points.remove((x, y, z))
+                    continue
 
                 # Check for horizontal constraints if applicable
                 if not Horz_check(Students[k][-1], (x, y, z)):  # noqa: F405

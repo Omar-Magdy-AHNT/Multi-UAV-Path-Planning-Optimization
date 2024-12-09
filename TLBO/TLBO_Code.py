@@ -105,7 +105,7 @@ def check(point,ai,i):
         #print("Point is out of bounds PSO, skipping.")  # Debugging statement for out of bounds 
         return True  # Return True to indicate this point is invalid (out of bounds)
     
-    if not PointValid(point, A, i+1):
+    if not PointValid(point, A):
         #print("Point is already exists PSO, skipping.")  # Debugging statement for duplicates
         return True  # Return True to indicate this point is invalid (duplicate)
     
