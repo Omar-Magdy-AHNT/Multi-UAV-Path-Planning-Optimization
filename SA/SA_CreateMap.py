@@ -66,9 +66,9 @@ def createmap():
                 possible_points.remove((x, y, z))  # Remove the point from possible points
                 continue  # Skip to the next iteration
             
-            if not dist(Droneinfo[-1], (x, y, z)):
-                print("Distance constraint failed, skipping.")
-                possible_points.remove
+            # if not dist(Droneinfo[-1], (x, y, z)):
+            #     print("Distance constraint failed, skipping.")
+            #     possible_points.remove
 
             # Check for horizontal constraints if applicable
             if not Horz_check(Droneinfo[-1], (x, y, z)):

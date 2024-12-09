@@ -91,10 +91,10 @@ def newsolution():
                 possible_points.remove((xn, yn, zn))  # Remove the invalid point
                 continue  # Skip this iteration
             
-            if not dist(Droneinfo[g - 1], (xn, yn, zn)) and not dist((xn, yn, zn), Droneinfo[g + 1]):
-                #print("Distance constraint failed SA, skipping.")
-                possible_points.remove((xn, yn, zn))  # Remove the invalid point
-                continue  # Skip this iteration
+            # if not dist(Droneinfo[g - 1], (xn, yn, zn)) and not dist((xn, yn, zn), Droneinfo[g + 1]):
+            #     #print("Distance constraint failed SA, skipping.")
+            #     possible_points.remove((xn, yn, zn))  # Remove the invalid point
+            #     continue  # Skip this iteration
 
             # Check for horizontal constraints if applicable
             if not Horz_check(Droneinfo[g - 1], (xn, yn, zn)) and not Horz_check((xn, yn, zn),Droneinfo[g + 1]):
