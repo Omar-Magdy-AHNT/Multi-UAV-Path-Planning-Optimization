@@ -18,7 +18,134 @@ import matplotlib.pyplot as plt  # Import matplotlib for plotting
 from mpl_toolkits.mplot3d import Axes3D  # Import 3D plotting toolkit
 import numpy as np  # Import numpy for numerical operations
 import itertools  # Import itertools for generating combinations
-import copy  # Import the copy module
+
+def fitness():
+    global Ranking, TopStudent, TopScore
+    Ranking = []
+    for i in range(numstudents):
+        x = func1(i, Students)  # This function returns distance values for the i-th child
+        y = func2(i, Students)
+        z = func3(i, Students)
+        total_dist = sum(x)
+        total_danger = sum(y)
+        total_penalty = sum(z)
+        fit = total_dist + total_danger + total_penalty
+        Ranking.append(fit)
+    if TopScore == 0:
+        TopStudent = Students[Ranking.index(min(Ranking))].copy()
+        TopScore = min(Ranking)
+    elif TopScore > min(Ranking):
+        TopStudent = Students[Ranking.index(min(Ranking))].copy()
+        TopScore = min(Ranking)
+
+def teacher_phase():
+    for i in range(numstudents):
+        for k in range(numdrones):
+            start_idx = (k) * (numtrackp + 2) + 1
+            end_idx = (k + 1) * (numtrackp + 2)
+            for j in range(start_idx, end_idx - 1):
+                r = random.random()
+                px = Students[i][j][0] + r*(TopStudent[j][0] - TeachFactor*meanpoints[j][0])
+                py = Students[i][j][1] + r*(TopStudent[j][1] - TeachFactor*meanpoints[j][1])
+                pz = Students[i][j][2] + r*(TopStudent[j][2] - TeachFactor*meanpoints[j][2])
+                p = (math.ceil(px), math.ceil(py), math.ceil(pz))
+                if not check(p,i,j): 
+                    Students[i][j] = p  # Update the student's position
+
+def learner_phase():
+    for i in range(numstudents):
+        for k in range(numdrones):
+            start_idx = (k) * (numtrackp + 2) + 1
+            end_idx = (k + 1) * (numtrackp + 2)
+            for j in range(start_idx, end_idx - 1):
+                r = random.random()
+                while True:
+                    b = random.randint(0, numstudents - 1)
+                    if b != i:
+                        break
+                if Ranking[i] > Ranking[b]:
+                    px = Students[i][j][0] + r*(Students[i][j][0] - Students[b][j][0])
+                    py = Students[i][j][1] + r*(Students[i][j][1] - Students[b][j][1])
+                    pz = Students[i][j][2] + r*(Students[i][j][2] - Students[b][j][2])
+                    p = (math.ceil(px), math.ceil(py), math.ceil(pz))
+                else:
+                    px = Students[i][j][0] - r*(Students[b][j][0] - Students[i][j][0])
+                    py = Students[i][j][1] - r*(Students[b][j][1] - Students[i][j][1])
+                    pz = Students[i][j][2] - r*(Students[b][j][2] - Students[i][j][2])
+                    p = (math.ceil(px), math.ceil(py), math.ceil(pz))
+                if not check(p,i,j): 
+                    Students[i][j] = p  # Update the student's position
+
+def meanp():
+    global meanpoints
+    meanpoints = []
+    for k in range(numdrones):
+        meanpoints.append((0, 0, 0))
+        start_idx = (k) * (numtrackp + 2)+1 
+        end_idx = (k + 1) * (numtrackp + 2)
+        for j in range(start_idx, end_idx-1):
+            sumx = 0
+            sumy = 0
+            sumz = 0
+            for i in range(numstudents):
+                sumx += Students[i][j][0]
+                sumy += Students[i][j][1]
+                sumz += Students[i][j][2]
+            meanpoints.append((sumx/numstudents, sumy/numstudents, sumz/numstudents))
+        meanpoints.append((0, 0, 0))
+
+
+def check(point,ai,i):
+    x = point[0]
+    y = point[1]
+    z = point[2]
+    A = Students[ai]
+    # Check if the point is within the valid grid size
+    if x < 0 or x > gridsize or y < 0 or y > gridsize or z < 0 or z > gridsize:
+        #print("Point is out of bounds PSO, skipping.")  # Debugging statement for out of bounds 
+        return True  # Return True to indicate this point is invalid (out of bounds)
+    
+    if not PointValid(point, A, i+1):
+        #print("Point is already exists PSO, skipping.")  # Debugging statement for duplicates
+        return True  # Return True to indicate this point is invalid (duplicate)
+    
+    # if not dist(A[i - 1], point):
+    #     #print("Distance check failed PSO, skipping.")  # Debugging statement for distance check failure
+    #     return True  # Return True if distance check fails
+
+    if not Horz_check(A[i - 1], point):
+        #print("Horizontal check failed PSO, skipping.")  # Debugging statement for horizontal check failure
+        return True  # Return True if horizontal check fails
+
+    # Check if the point lies on a valid line from the previous points
+    if not Trackpointlinevalid(A[i - 1], point, A, i): 
+        #print("Line check failed PSO, skipping.")  # Debugging statement for line check failure
+        return True  # Return True if line check fails
+    
+    if i > 1:
+        if not vertical_check(A[i - 2], A[i - 1], point):
+            #print("Vertical check failed PSO, skipping.")
+            return True  # Return True if vertical check fails
+    
+    if i == numtrackp or i == (len(A) - 2):
+        # Check if the vertical relationship between the last point and the next one is valid
+        if not vertical_check(A[i - 1], point, A[-1]):
+            #print("Vertical check failed PSO, skipping.")
+            return True  # Return True if vertical check fails
+        
+        # Check if the line between the current point and the last point is valid
+        if not Trackpointlinevalid(point, A[-1], A, i):
+            #print("Line check failed PSO, skipping.")  # Debugging statement for line check failure
+            return True  # Return True if line check fails
+        
+        # Check if the horizontal relationship between the current point and the last point is valid
+        if not Horz_check(point, A[-1]):
+            #print("Horizontal check failed PSO, skipping.")  # Debugging statement for horizontal check failure
+            return True  # Return True if horizontal check fails
+    
+    # If all checks pass, return False indicating the point is valid
+    return False
+
 
 
 def plot_map(Droneinfo, obstlist, numdrones, numtrackp, gridsize):
@@ -61,8 +188,22 @@ def plot_map(Droneinfo, obstlist, numdrones, numtrackp, gridsize):
 def run():
     createobs(gridsize)  # Create obstacles in the simulation grid
     createmap()  # Create the map for drones, including start and end points
-
-
+    fitness()
+    cost.append(TopScore)
+    print("Best Rank: ", TopScore) # Print the best fitness value of the current generation
+    print("Top Student: ", TopStudent)  # Print the best individual of the current generation
+    for i in range(schooldays):
+        print("Iteration: ", i)
+        meanp()
+        teacher_phase()
+        fitness()
+        learner_phase()
+        fitness()
+        cost.append(TopScore)
+        print("Best Rank: ", TopScore) # Print the best fitness value of the current generation
+        print("Top Student: ", TopStudent)  # Print the best individual of the current generation
+    bestobjective = cost[-1]
+    Output = TopStudent
     return Output, bestobjective
 
 # Only run the following code when this file is executed directly

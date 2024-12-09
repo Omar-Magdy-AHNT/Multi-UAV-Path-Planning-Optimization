@@ -369,12 +369,14 @@ def run():
     # Generate obstacles and create the map for the simulation
     createobs(gridsize)
     createmap()
-
+    fittest()  # Evaluate the fitness of the initial population
+    cost.append(min(fitness))
+    print("Best fitness value: ", min(fitness))  # Print the best fitness value of the current generation
+    print("Best individual: ", children[fitness.index(min(fitness))])  # Print the best individual of the current generation
     # Main loop for each generation in the genetic algorithm
     for i in range(numofgen):
         # Generate a new generation based on the current population
         newgen()
-        
         # Print the current generation number
         print("Generation: ", i)
         

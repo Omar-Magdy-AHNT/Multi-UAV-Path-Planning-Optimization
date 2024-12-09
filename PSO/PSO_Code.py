@@ -184,6 +184,8 @@ def run():
     PFittness()
     GFittness()
     cost.append(Global_Fitness)
+    print("Best fitness value: ", Global_Fitness)  # Print the best fitness value of the current generation
+    print("Best Bird: ", global_path)  # Print the best individual of the current generation
     for i in range(maxiter):
         print("Iteration: ", i)
         newsol()

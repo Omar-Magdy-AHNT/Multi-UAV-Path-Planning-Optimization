@@ -46,8 +46,12 @@ Students = [[] for _ in range(numstudents)]  # List to store the Students
 # Initialize the ranking of the students
 Ranking = []  # List to store the fitness of the students
 
+TopStudent = []  # List to store the top students
+
+TopScore = 0  # List to store the top score
+
 # Initialize the mean rank of the students
-meanrank=0 # Mean fitness of the students
+meanpoints = [] # Mean fitness of the students
 
 # Output list to store the results of the simulation
 Output = []
