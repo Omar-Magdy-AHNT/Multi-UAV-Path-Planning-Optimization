@@ -2,7 +2,7 @@ import numpy as np  # Import numpy module for numerical operations
 import math  # Import math module for mathematical functions
 
 # Number of drones in the simulation (can be adjusted based on your system)
-numdrones = 2   
+numdrones = 4   
 
 # Maximum permissible distance between drones (depends on controller accuracy)
 maxpdist = 4 
@@ -24,7 +24,7 @@ amax = 75 *np.pi/180  # Convert to radians
 bmax = 60 *np.pi/180  # Convert to radians
 
 # Number of generations in the simulation or optimization process
-numofgen = 100
+numofgen = 10
 
 # Population Size
 numpopu= 10 

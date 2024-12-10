@@ -134,7 +134,7 @@ def newsol():
                         Birds[i][j] = Pu
                         Velocity[i] = (vx, vy, vz)
                         break
-                    
+
 def plot_map(Droneinfo, obstlist, numdrones, numtrackp, gridsize):
     fig = plt.figure()  # Create a new figure
     ax = fig.add_subplot(111, projection='3d')  # Add a 3D subplot
