@@ -23,20 +23,17 @@ amax = 75 *np.pi/180  # Convert to radians
 # Maximum Vertical angle (in radians) 
 bmax = 60 *np.pi/180  # Convert to radians
 
-TeachFactor = 1 # Teaching factor
-
 schooldays = 10 # Number of iterations
 
 numstudents = 50 # Number of students
 
 penalty_factor=10
 
-def set_TLBO_params(n_drones, max_dist, safe_dist, max_iter, teaching_factor,students):
+def set_TLBO_params(n_drones, max_dist, safe_dist, max_iter,students):
     global numdrones, maxpdist, gridsize, dsafe, amax, bmax,schooldays,TeachFactor ,numstudents
     numdrones = n_drones
     maxpdist = max_dist
     dsafe = safe_dist
-    TeachFactor = teaching_factor
     schooldays = max_iter
     numstudents = students
 

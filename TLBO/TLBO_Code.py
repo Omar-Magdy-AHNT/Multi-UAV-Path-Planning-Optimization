@@ -43,6 +43,7 @@ def teacher_phase():
             end_idx = (k + 1) * (numtrackp + 2)
             for j in range(start_idx, end_idx - 1):
                 r = random.random()
+                TeachFactor = random.choice([1, 2])
                 px = Students[i][j][0] + r*(TopStudent[j][0] - TeachFactor*meanpoints[j][0])
                 py = Students[i][j][1] + r*(TopStudent[j][1] - TeachFactor*meanpoints[j][1])
                 pz = Students[i][j][2] + r*(TopStudent[j][2] - TeachFactor*meanpoints[j][2])
