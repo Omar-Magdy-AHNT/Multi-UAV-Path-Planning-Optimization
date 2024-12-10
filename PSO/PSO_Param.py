@@ -40,14 +40,20 @@ maxiter = 10 # Maximum number of iterations
 
 penalty_factor=10
 
-def set_PSO_params(n_drones, max_dist, safe_dist,max_iter,weight ,cognitive, social,population):
-    global numdrones, maxpdist, gridsize, dsafe, amax, bmax, w, c1, c2, maxiter, numparticles
+def set_PSO_params(n_drones, max_dist, safe_dist,max_iter,weightx, weighty, weightz ,cognitivex,cognitivey,cognitivez, socialx,socialy,socialz,population):
+    global numdrones, maxpdist, gridsize, dsafe, amax, bmax, wx,wy,wz, cx1,cy1,cz1, cx2,cy2,cz2, maxiter, numparticles
     numdrones = n_drones
     maxpdist = max_dist
     dsafe = safe_dist
-    w = weight
-    c1 = cognitive
-    c2 = social
+    wx = weightx
+    wy = weighty
+    wz = weightz
+    cx1 = cognitivex
+    cy1 = cognitivey
+    cz1 = cognitivez
+    cx2 = socialx
+    cy2 = socialy
+    cz2 = socialz
     maxiter = max_iter
     numparticles = population
 
