@@ -26,30 +26,39 @@ bmax = 60 *np.pi/180  # Convert to radians
 # Number of generations in the simulation or optimization process
 numofgen = 10
 
-# Number of parents selected for each generation (used in evolutionary algorithms)
-numparents = 4
+# Population Size
+numpopu= 20 
 
-# Number of children generated in each generation
-numchildren = 4
+pe= 0.2
 
-# Number of mutants (random variations) generated in each generation
-nummutants = 4
+pm= 0.4
 
-# Number of elite individuals selected for the next generation (best-performing)
-numelite = 1
+pc= 0.4
 
 penalty_factor=10
 
-def set_GA_params(n_drones, max_dist, safe_dist, gen, parents, children, mutants, elite):
-    global numdrones, maxpdist, gridsize, dsafe, amax, bmax, numofgen, numparents, numchildren, nummutants, numelite
+def set_GA_params(n_drones, max_dist, safe_dist, gen, populationsize, children, mutants, elite):
+    global numdrones, maxpdist, gridsize, dsafe, amax, bmax, numofgen, numpopu, pc, pm, pe
     numdrones = n_drones
     maxpdist = max_dist
     dsafe = safe_dist
     numofgen = gen
-    numparents = parents
-    numchildren = children
-    nummutants = mutants
-    numelite = elite
+    numpopu = populationsize
+    pc = children
+    pm = mutants
+    pe = elite
+
+# Number of children generated in each generation
+numchildren = round(numpopu*pc)
+
+# Number of mutants (random variations) generated in each generation
+nummutants = round(numpopu*pm)
+
+# Number of elite individuals selected for the next generation (best-performing)
+numelite = round(numpopu*pe)
+
+# Number of parents selected for each generation (used in evolutionary algorithms)
+numparents = round(numchildren/2)+1
 
 # Output list to store the results of the simulation
 Output = []
@@ -64,16 +73,19 @@ startpoint = []
 endpoint = []
 
 # List to store parent drones (or solutions in optimization)
-parents = []  
+parents = [[] for _ in range(numparents)]  
 
 # List of children drones (or solutions) created from the parents
-children = [[] for _ in range(numchildren+nummutants)]  # Initialize list of children for each parent
+children = [[] for _ in range(numchildren)]  # Initialize list of children for each parent
 
 # Fitness list to store the performance score of each individual drone/solution
 fitness = []  
 
 # List to store the elite individuals (best-performing drones/solutions)
-elites = []  
+elites = [[] for _ in range(numelite)]  
 
 # List to store mutants (randomly generated drones/solutions)
-mutants = []  
+mutants = [[] for _ in range(nummutants)]  
+
+# List to store population
+population = [[] for _ in range(numpopu)]

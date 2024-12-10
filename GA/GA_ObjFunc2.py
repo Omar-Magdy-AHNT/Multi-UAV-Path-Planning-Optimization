@@ -1,6 +1,6 @@
 from GA.GA_Param import *
 
-def func2(l,d):
+def func2(d):
     dang = []
     for i in range(numdrones):
         totaldanger = 0
@@ -10,9 +10,9 @@ def func2(l,d):
 
         # Iterate through the track points of the current drone
         for j in range(start_idx, end_idx):  
-            x = d[l][j][0]
-            y = d[l][j][1]
-            z = d[l][j][2]
+            x = d[j][0]
+            y = d[j][1]
+            z = d[j][2]
             b = 0
             # Check distance to each obstacle in obstlist
             for k in range(len(obstlist)):

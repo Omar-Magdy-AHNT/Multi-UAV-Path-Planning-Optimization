@@ -1,6 +1,6 @@
 from TLBO.TLBO_Param import *
 
-def func1(d, A):
+def func1( A):
     dist = []
     for i in range(numdrones):
         tdist = 0
@@ -11,13 +11,13 @@ def func1(d, A):
         # Now, calculate the distance over the entire path for this drone
         for j in range(start_idx, end_idx - 1):  # Avoid out-of-bounds by stopping before the last point
             # Current point
-            x = A[d][j][0]
-            y = A[d][j][1]
-            z = A[d][j][2]
+            x = A[j][0]
+            y = A[j][1]
+            z = A[j][2]
             # Next point
-            x1 = A[d][j + 1][0]
-            y1 = A[d][j + 1][1]
-            z1 = A[d][j + 1][2]
+            x1 = A[j + 1][0]
+            y1 = A[j + 1][1]
+            z1 = A[j + 1][2]
             # Calculate distance and accumulate
             tdist += (((x - x1)**2) + ((y - y1)**2) + ((z - z1)**2))**0.5
         

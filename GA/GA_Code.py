@@ -25,10 +25,22 @@ import copy  # Import the copy module
 # Main function to generate a new generation in the genetic algorithm
 def newgen():
     elite()  # Select elite individuals
-    mutation()  # Apply mutation to the population
+    parentsel()  # Select parents for crossover
     crossover()  # Apply crossover to the population
+    mutation()  # Apply mutation to the population
+    newpop()
 
+def newpop():
+    population.clear()  # Clear the current population list
+    for i in range(nummutants):
+        population.append(copy.deepcopy(mutants[i]))  # Append each mutant to the children list
 
+    for j in range(numelite):
+        population.append(copy.deepcopy(elites[j]))  # Append each elite individual to the children list
+
+    for k in range(numchildren):
+        population.append(copy.deepcopy(children[k]))  # Append each elite individual to the children list
+    
 # Select the elite individuals from the current population
 def elite():
     global elites
@@ -36,8 +48,8 @@ def elite():
     fittest()  # Find the fittest individuals
     for i in range(numelite):
         z = fitness.index(min(fitness))  # Get the index of the fittest individual
-        elites.append(copy.deepcopy(children[z]))  # Add the fittest individual to elites
-        del children[z]  # Remove it from the children list
+        elites.append(copy.deepcopy(population[z]))  # Add the fittest individual to elites
+        del population[z]  # Remove it from the children list
         del fitness[z]  # Remove its fitness value
 
 
@@ -81,19 +93,23 @@ def generate_alpha_combinations(parents, i, k, alpha_values, intg):
 
     return combinations  # Return the list of generated combinations
 
-# Function to perform crossover between elite and non-elite individuals to generate new children
-def crossover():
+
+def parentsel():
     # Append elite individuals to parents list
+    parents.clear()  # Clear the parents list
     for i in range(numelite):
         parents.append(copy.deepcopy(elites[i]))  # Copy each elite individual to parents
 
     # Append non-elite individuals (based on fitness) to parents list
     for il in range(numparents - numelite):
         h = fitness.index(min(fitness))  # Find the index of the individual with the minimum fitness
-        parents.append(children[h])  # Append the corresponding child to parents list
+        parents.append(population[h])  # Append the corresponding child to parents list
+        del population[h]  # Remove it from the children list
+        del fitness[h]  # Remove its fitness value
 
-    # Clear previous fitness and children lists for the next generation
-    fitness.clear()
+
+# Function to perform crossover between elite and non-elite individuals to generate new children
+def crossover():
     children.clear()
 
     # Generate new children by performing crossover on parents
@@ -120,7 +136,6 @@ def crossover():
 
                 # Generate an array of alpha values for interpolation
                 alpha_values = np.linspace(0.1, 0.7, num=30)  # Adjust the number of alpha values as needed
-                
                 # Generate alpha combinations for the first child
                 combine = generate_alpha_combinations(parents, i, k, alpha_values, 1)
                 for c in range(len(combine)):
@@ -155,14 +170,7 @@ def crossover():
         if fitness[-1] > fitness[-2]:  # Compare the last two fitness values
             del children[-1]  # Discard the last child if it has worse fitness
         else: 
-            del children[-2]  # Otherwise, discard the second last child
-
-    # Add mutants and elite individuals to the children list
-    for p in range(nummutants):
-        children.append(copy.deepcopy(mutants[p]))  # Append each mutant to the children list
-
-    for l in range(numelite):
-        children.append(copy.deepcopy(elites[l]))  # Append each elite individual to the children list
+            del children[-2]  # Otherwise, discard the second last chil
 
 
 
@@ -170,13 +178,12 @@ def crossover():
 def fittest():
     # Clear previous fitness values
     fitness.clear()
-
     # Iterate over each child in the children list
-    for i in range(len(children)):
+    for i in range(len(population)):
         # Calculate x and y values for the i-th child using func1 and func2
-        x = func1(i, children)  # This function returns distance values for the i-th child
-        y = func2(i, children)  # This function returns danger values for the i-th child
-        z = func3(i, children)  # This function returns penalty values for the i-th child
+        x = func1(population[i])  # This function returns distance values for the i-th child
+        y = func2(population[i])  # This function returns danger values for the i-th child
+        z = func3(population[i])  # This function returns penalty values for the i-th child
         # Calculate the total distance by summing the x values
         total_dist = sum(x)
 
@@ -211,10 +218,10 @@ def mutation():
     mutants.clear()
 
     # Ensure the number of mutants is at least `nummutants`, if not, append elites to fill the gap
-    if len(children) < nummutants:
-        k = abs(len(children) - nummutants)
+    if len(population) < nummutants:
+        k = abs(len(population) - nummutants)
         for u in range(k):
-            children.append(copy.deepcopy(elites[u]))  # Add elite solutions to the children list
+            population.append(copy.deepcopy(elites[u]))  # Add elite solutions to the children list
 
     # Find the fittest solutions by evaluating the fitness of children
     fittest()
@@ -228,7 +235,7 @@ def mutation():
         i = fitness.index(vix[f])
 
         # Append the fittest solutions to the mutants list
-        mutants.append(copy.deepcopy(children[i]))
+        mutants.append(copy.deepcopy(population[i]))
 
         # Mutate each drone's path
         for j in range(numdrones):
@@ -314,21 +321,20 @@ def check(p1, a1, k):
         #print("Point is already exists GA, skipping.")  # Debugging statement for duplicates
         return True  # Return True to indicate this point is invalid (duplicate)
 
+    if not Horz_check(a1[d - 1], p1):
+        #print("Horizontal check failed GA, skipping.")  # Debugging statement for horizontal check failure
+        return True  # Return True if horizontal check fails
+
+    if not Trackpointlinevalid(a1[d - 1], p1, a1, d): 
+        #print("Line check failed GA, skipping.")  # Debugging statement for line check failure
+        return True  # Return True if line check fails
+    
     # If the point is not the first point, check if the previous points are valid vertically
     if d > 1:
         if not vertical_check(a1[d - 2], a1[d - 1], p1):
             #print("Vertical check failed GA, skipping.")
             return True  # Return True if vertical check fails
-    
-    # Check if the point lies on a valid line from the previous points
-    if not Trackpointlinevalid(a1[d - 1], p1, a1, d): 
-        #print("Line check failed GA, skipping.")  # Debugging statement for line check failure
-        return True  # Return True if line check fails
-    
-    # Check if the point passes the horizontal validity check
-    if not Horz_check(a1[d - 1], p1):
-        #print("Horizontal check failed GA, skipping.")  # Debugging statement for horizontal check failure
-        return True  # Return True if horizontal check fails
+
 
     # Special case for the last track point, needs additional checks with the point after it
     if d == numtrackp or d == (len(a1) - 2):
@@ -364,7 +370,7 @@ def run():
     fittest()  # Evaluate the fitness of the initial population
     cost.append(min(fitness))
     print("Best fitness value: ", min(fitness))  # Print the best fitness value of the current generation
-    print("Best individual: ", children[fitness.index(min(fitness))])  # Print the best individual of the current generation
+    print("Best individual: ", population[fitness.index(min(fitness))])  # Print the best individual of the current generation
     # Main loop for each generation in the genetic algorithm
     for i in range(numofgen):
         # Generate a new generation based on the current population
@@ -375,7 +381,7 @@ def run():
         # Evaluate the fitness of the current generation
         fittest()
         print("Best fitness value: ", min(fitness))  # Print the best fitness value of the current generation
-        print("Best individual: ", children[fitness.index(min(fitness))])  # Print the best individual of the current generation
+        print("Best individual: ", population[fitness.index(min(fitness))])  # Print the best individual of the current generation
         # Append the best fitness value of the current generation to the cost list
         cost.append(min(fitness))
 

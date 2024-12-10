@@ -16,15 +16,14 @@ from TLBO.TLBO_CreateMap import *  # Import function to create the map
 import matplotlib.pyplot as plt  # Import matplotlib for plotting
 from mpl_toolkits.mplot3d import Axes3D  # Import 3D plotting toolkit
 import numpy as np  # Import numpy for numerical operations
-import itertools  # Import itertools for generating combinations
 
 def fitness():
     global Ranking, TopStudent, TopScore
     Ranking = []
     for i in range(numstudents):
-        x = func1(i, Students)  # This function returns distance values for the i-th child
-        y = func2(i, Students)
-        z = func3(i, Students)
+        x = func1(Students[i])  # This function returns distance values for the i-th child
+        y = func2(Students[i])
+        z = func3(Students[i])
         total_dist = sum(x)
         total_danger = sum(y)
         total_penalty = sum(z)
@@ -62,15 +61,15 @@ def learner_phase():
                     b = random.randint(0, numstudents - 1)
                     if b != i:
                         break
-                if Ranking[i] > Ranking[b]:
+                if Ranking[i] < Ranking[b]:
                     px = Students[i][j][0] + r*(Students[i][j][0] - Students[b][j][0])
                     py = Students[i][j][1] + r*(Students[i][j][1] - Students[b][j][1])
                     pz = Students[i][j][2] + r*(Students[i][j][2] - Students[b][j][2])
                     p = (math.ceil(px), math.ceil(py), math.ceil(pz))
                 else:
-                    px = Students[i][j][0] - r*(Students[b][j][0] - Students[i][j][0])
-                    py = Students[i][j][1] - r*(Students[b][j][1] - Students[i][j][1])
-                    pz = Students[i][j][2] - r*(Students[b][j][2] - Students[i][j][2])
+                    px = Students[i][j][0] - r*(Students[i][j][0] - Students[b][j][0])
+                    py = Students[i][j][1] - r*(Students[i][j][1] - Students[b][j][1])
+                    pz = Students[i][j][2] - r*(Students[i][j][2] - Students[b][j][2])
                     p = (math.ceil(px), math.ceil(py), math.ceil(pz))
                 if not check(p,i,j): 
                     Students[i][j] = p  # Update the student's position

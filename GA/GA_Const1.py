@@ -1,29 +1,28 @@
-import numpy
 from GA.GA_Param import *
+import numpy
 
-def vertical_check(p1,p2,p3):
-    xm = p1[0]
-    ym = p1[1]
-    zm = p1[2]
+def vertical_check(p1, p2, p3):
+    # Extract coordinates
+    xm, ym, zm = p1
+    x, y, z = p2
+    x1, y1, z1 = p3
 
-    x = p2[0]
-    y = p2[1]
-    z = p2[2]
+    # Calculate distances
+    L1 = ((xm - x)**2 + (ym - y)**2 + (zm - z)**2)**0.5
+    L2 = ((x - x1)**2 + (y - y1)**2 + (z - z1)**2)**0.5
+    L3 = ((xm - x1)**2 + (ym - y1)**2 + (zm - z1)**2)**0.5
 
-    x1 = p3[0]
-    y1 = p3[1]
-    z1 = p3[2]
-
-    L1 = ((xm-x)**2 + (ym-y)**2 + (zm-z)**2)**0.5
-    L2 = ((x-x1)**2 + (y-y1)**2 + (z-z1)**2)**0.5
-    L3 = ((xm-x1)**2 + (ym-y1)**2 + (zm-z1)**2)**0.5
-    
-    if L1+L2<L3 or L1+L3<L2 or L2+L3<L1:
+    # Check triangle inequality
+    if L1 + L2 <= L3 or L1 + L3 <= L2 or L2 + L3 <= L1:
         return False
-    
-    a = numpy.arccos((L1**2 + L2**2 - L3**2)/(2*L1*L2))
 
-    if a>amax:
+    # Calculate the angle using the cosine rule
+    cos_a = (L1**2 + L2**2 - L3**2) / (2 * L1 * L2)
+    cos_a = numpy.clip(cos_a, -1, 1)  # Clamp to avoid numerical issues
+    a = numpy.arccos(cos_a)
+
+    # Check angle constraint
+    if a > amax:
         return False
-    
+
     return True

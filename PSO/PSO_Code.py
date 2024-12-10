@@ -26,9 +26,9 @@ def GFittness():
 
 def fits(i):
     # Calculate x and y values for the i-th child using func1 and func2
-    x = func1(i, Birds)  # This function returns distance values for the i-th child
-    y = func2(i, Birds)  # This function returns danger values for the i-th child
-    z = func3(i, Birds)
+    x = func1(Birds[i])  # This function returns distance values for the i-th child
+    y = func2(Birds[i])  # This function returns danger values for the i-th child
+    z = func3(Birds[i])
     total_dist = sum(x)
     total_danger = sum(y)
     total_penalty = sum(z)
