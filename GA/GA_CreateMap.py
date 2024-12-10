@@ -5,6 +5,7 @@ from GA.GA_Const4 import Trackpointlinevalid  # Import function to validate trac
 from GA.GA_Param import *  # Import data structures and variables
 import random  # Import random module
 
+
 def generate_integer_points(grid_size):
     points = []
     for x in range(grid_size + 1):
@@ -48,7 +49,8 @@ def createmap():
             added_points = 0  # Initialize count of successfully added track points
             possible_points = generate_integer_points(gridsize)
             # Keep trying until we add the required number of track points
-            while added_points < numtrackp:  
+            while added_points < numtrackp: 
+                random.seed(random.random()) 
                 x, y, z = random.choice(possible_points)  # Randomly select a new point from possible points
 
                 # Check if the generated point is in the obstacle list

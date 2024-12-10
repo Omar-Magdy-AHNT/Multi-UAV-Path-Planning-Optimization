@@ -17,21 +17,19 @@ def func3(Droneinfo):
             # Extract x, y (ignore z for this check)
             x, y, z = current_point
             next_x, next_y, next_z = next_point
+            end_x, end_y, end_z = endpoint[i]
             
             # Penalty for going backward in x or y direction
-            if x+1 >= next_x:
-                total_penalty += penalty_factor*((x+1) - next_x)*j
-            if y+1 >= next_y:
-                total_penalty += penalty_factor*((y+1) - next_y)*j
-
-            if next_z > z+1:
-                total_penalty += penalty_factor*(next_z-z  )*j
+            if (end_x-x) < (end_x-next_x):
+                total_penalty += penalty_factor*j
+            if (end_y-y) < (end_y-next_y):
+                total_penalty += penalty_factor*j
             
             # Calculate distance between current and previous point
             distance = np.linalg.norm(np.array(current_point) - np.array(next_point))
             
             # Penalty for exceeding maximum distance
             if distance > maxpdist:
-                total_penalty += penalty_factor*(distance - maxpdist)
+                total_penalty += penalty_factor*(distance - maxpdist)*j
         penalty.append(total_penalty)
     return penalty

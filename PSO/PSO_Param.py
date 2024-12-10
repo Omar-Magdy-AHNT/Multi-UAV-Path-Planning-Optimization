@@ -5,7 +5,7 @@ import math  # Import math module for mathematical functions
 numdrones = 2   
 
 # Maximum permissible distance between drones (depends on controller accuracy)
-maxpdist = 5 
+maxpdist = 4     
 
 # Size of the grid (depends on the environment setup)
 gridsize = 10 
@@ -25,16 +25,16 @@ bmax = 60 *np.pi/180  # Convert to radians
 
 numparticles = 50 # Number of particles in the swarm
 
-wx = 0.792
-wy = 0.792
-wz = 0.792
+wx = 0.85
+wy = 0.9
+wz = 0.4
 
-cx1 = 2
-cy1 = 2.3
-cz1 = 0.7
-cx2 = 1  
-cy2 = 1.1 
-cz2 = 0.7  
+cx1 = 2.2
+cy1 = 2.5
+cz1 = 1
+cx2 = 1.1  
+cy2 = 1.5 
+cz2 = 0.6  
 
 maxiter = 10 # Maximum number of iterations
 

@@ -189,7 +189,7 @@ def run():
         print("Best fitness value: ", Global_Fitness)  # Print the best fitness value of the current generation
         print("Best Bird: ", global_path)  # Print the best individual of the current generation
         cost.append(Global_Fitness)
-    BestBird = global_path
+    BestBird = global_path.copy()
     return BestBird, Global_Fitness
 
 if __name__ == "__main__":
