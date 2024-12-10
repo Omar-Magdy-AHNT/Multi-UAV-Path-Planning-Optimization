@@ -1,2 +1,4 @@
-
+plot.py
 terrain_map.npy
+maparrayplotting.py
+createIRLmap.py
