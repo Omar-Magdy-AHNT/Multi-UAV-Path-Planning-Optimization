@@ -13,7 +13,6 @@ from PSO.PSO_Const1 import *
 from PSO.PSO_Const2 import *
 from PSO.PSO_Const3 import *
 from PSO.PSO_Const4 import *
-from PSO.PSO_Const5 import *
 from PSO.PSO_ObjFunc1 import *
 from PSO.PSO_ObjFunc2 import *
 from PSO.PSO_ObjFunc3 import *
@@ -61,10 +60,6 @@ def check(point,ai,i):
     if not PointValid(point, A):
         #print("Point is already exists PSO, skipping.")  # Debugging statement for duplicates
         return True  # Return True to indicate this point is invalid (duplicate)
-    
-    # if not dist(A[i - 1], point):
-    #     #print("Distance check failed PSO, skipping.")  # Debugging statement for distance check failure
-    #     return True  # Return True if distance check fails
 
     if not Horz_check(A[i - 1], point):
         #print("Horizontal check failed PSO, skipping.")  # Debugging statement for horizontal check failure

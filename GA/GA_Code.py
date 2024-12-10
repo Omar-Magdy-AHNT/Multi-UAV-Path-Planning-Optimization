@@ -9,7 +9,6 @@ from GA.GA_Const1 import *  # Import constants related to the simulation
 from GA.GA_Const2 import *  # Import additional constants
 from GA.GA_Const3 import *  # Import more constants
 from GA.GA_Const4 import Trackpointlinevalid  # Import function to validate track point lines
-from GA.GA_Const5 import *  # Import function to check distance constraint
 from GA.GA_Param import *  # Import data structures and variables
 from GA.GA_ObjFunc1 import *  # Import first objective function
 from GA.GA_ObjFunc2 import *  # Import second objective function
@@ -81,9 +80,6 @@ def generate_alpha_combinations(parents, i, k, alpha_values, intg):
             combinations.append(c1)  # Append the second version of the combination
 
     return combinations  # Return the list of generated combinations
-
-
-
 
 # Function to perform crossover between elite and non-elite individuals to generate new children
 def crossover():
@@ -317,10 +313,6 @@ def check(p1, a1, k):
     if not PointValid(p1, a1):
         #print("Point is already exists GA, skipping.")  # Debugging statement for duplicates
         return True  # Return True to indicate this point is invalid (duplicate)
-    
-    # if not dist(a1[d - 1], p1):
-    #     #print("Distance check failed GA, skipping.")  # Debugging statement for distance check failure
-    #     return True  # Return True if distance check fails
 
     # If the point is not the first point, check if the previous points are valid vertically
     if d > 1:

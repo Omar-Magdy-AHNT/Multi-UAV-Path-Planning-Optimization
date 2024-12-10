@@ -8,7 +8,6 @@ from TLBO.TLBO_Const1 import *  # Import constants related to the simulation
 from TLBO.TLBO_Const2 import *  # Import additional constants
 from TLBO.TLBO_Const3 import *  # Import more constants
 from TLBO.TLBO_Const4 import Trackpointlinevalid  # Import function to validate track point lines
-from TLBO.TLBO_Const5 import *  # Import function to check distance constraint
 from TLBO.TLBO_Param import *  # Import data structures and variables
 from TLBO.TLBO_ObjFunc1 import *  # Import first objective function
 from TLBO.TLBO_ObjFunc2 import *  # Import second objective function
@@ -108,10 +107,6 @@ def check(point,ai,i):
     if not PointValid(point, A):
         #print("Point is already exists PSO, skipping.")  # Debugging statement for duplicates
         return True  # Return True to indicate this point is invalid (duplicate)
-    
-    # if not dist(A[i - 1], point):
-    #     #print("Distance check failed PSO, skipping.")  # Debugging statement for distance check failure
-    #     return True  # Return True if distance check fails
 
     if not Horz_check(A[i - 1], point):
         #print("Horizontal check failed PSO, skipping.")  # Debugging statement for horizontal check failure

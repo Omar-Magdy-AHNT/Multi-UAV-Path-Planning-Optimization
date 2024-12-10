@@ -2,7 +2,6 @@ from SA.SA_Const1 import *  # Import constants related to the simulation
 from SA.SA_Const2 import *  # Import additional constants
 from SA.SA_Const3 import *  # Import more constants
 from SA.SA_Const4 import Trackpointlinevalid  # Import function to validate track points
-from SA.SA_Const5 import *  # Import more constants
 from SA.SA_Param import *  # Import data structures and variables
 import random  # Import random module for random number generation
 
@@ -55,20 +54,10 @@ def createmap():
             x, y, z = random.choice(possible_points)  # Randomly select a new point from possible points
 
             # Check if the generated point is in the obstacle list
-            if (x, y, z) in obstlist:
-                print("Point is an obstacle, skipping.")  # Debugging statement for obstacles
+            if not PointValid((x, y, z)) :
+                print("Point is not Valid, skipping.")  # Debugging statement for obstacles
                 possible_points.remove((x, y, z))  # Remove the point from possible points
                 continue  # Skip to the next iteration
-            
-            # Check if the generated point is already in Droneinfo
-            if (x, y, z) in Droneinfo:
-                print("Point is already in Droneinfo, skipping.")  # Debugging statement for duplicates
-                possible_points.remove((x, y, z))  # Remove the point from possible points
-                continue  # Skip to the next iteration
-            
-            # if not dist(Droneinfo[-1], (x, y, z)):
-            #     print("Distance constraint failed, skipping.")
-            #     possible_points.remove
 
             # Check for horizontal constraints if applicable
             if not Horz_check(Droneinfo[-1], (x, y, z)):

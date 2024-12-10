@@ -9,7 +9,6 @@ from SA.SA_Const1 import *  # Import constants related to the simulation
 from SA.SA_Const2 import *  # Import additional constants
 from SA.SA_Const3 import *  # Import more constants
 from SA.SA_Const4 import *  # Import function to validate track point lines
-from SA.SA_Const5 import *  # Import more constants
 from SA.SA_Param import *  # Import data structures and variables
 from SA.SA_ObjFunc1 import *  # Import first objective function
 from SA.SA_ObjFunc2 import *  # Import second objective 
@@ -90,11 +89,6 @@ def newsolution():
                 #print("Point is already in Droneinfo SA, skipping.")  # Debugging statement for duplicates
                 possible_points.remove((xn, yn, zn))  # Remove the invalid point
                 continue  # Skip this iteration
-            
-            # if not dist(Droneinfo[g - 1], (xn, yn, zn)) and not dist((xn, yn, zn), Droneinfo[g + 1]):
-            #     #print("Distance constraint failed SA, skipping.")
-            #     possible_points.remove((xn, yn, zn))  # Remove the invalid point
-            #     continue  # Skip this iteration
 
             # Check for horizontal constraints if applicable
             if not Horz_check(Droneinfo[g - 1], (xn, yn, zn)) and not Horz_check((xn, yn, zn),Droneinfo[g + 1]):

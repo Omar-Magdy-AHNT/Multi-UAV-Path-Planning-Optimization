@@ -11,7 +11,6 @@ from .TLBO_Const1 import *        # Import everything from Const1.py
 from .TLBO_Const2 import *        # Import everything from Const2.py
 from .TLBO_Const3 import *        # Import everything from Const3.py
 from .TLBO_Const4 import *        # Import everything from Const4.py
-from .TLBO_Const5 import *        # Import everything from Const4.py
 from .TLBO_ObjFunc1 import *      # Import everything from OF1.py
 from .TLBO_ObjFunc2 import *      # Import everything from OF2.py
 from .TLBO_ObjFunc3 import *      # Import everything from OF2.py
