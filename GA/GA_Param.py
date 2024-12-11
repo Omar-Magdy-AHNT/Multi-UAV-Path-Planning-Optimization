@@ -2,7 +2,7 @@ import numpy as np  # Import numpy module for numerical operations
 import math  # Import math module for mathematical functions
 
 # Number of drones in the simulation (can be adjusted based on your system)
-numdrones = 4   
+numdrones = 2   
 
 # Maximum permissible distance between drones (depends on controller accuracy)
 maxpdist = 4 

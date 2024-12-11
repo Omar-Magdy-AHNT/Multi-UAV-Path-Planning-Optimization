@@ -2,7 +2,7 @@ import numpy as np  # Import numpy module for numerical operations
 import math  # Import math module for mathematical functions
 
 # Number of drones to be used in the system
-numdrones = 4   # depends on the number of drones
+numdrones = 2   # depends on the number of drones
 
 # Maximum point distance, which might represent the accuracy of the controller
 maxpdist = 4  # depends on the controller accuracy 
