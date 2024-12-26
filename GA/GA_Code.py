@@ -367,10 +367,22 @@ def run():
     # Generate obstacles and create the map for the simulation
     createobs(gridsize)
     createmap()
-    fittest()  # Evaluate the fitness of the initial population
+
+    # Evaluate the fitness of the initial population
+    fittest()
     cost.append(min(fitness))
     print("Best fitness value: ", min(fitness))  # Print the best fitness value of the current generation
     print("Best individual: ", population[fitness.index(min(fitness))])  # Print the best individual of the current generation
+
+    # Initialize the cost plot
+    plt.figure()
+    plt.ion()  # Enable interactive mode
+    cost_line, = plt.plot(cost, marker='o', label='Cost Curve', color='blue')  # Initialize the plot line
+    plt.title('Minimization Curve')
+    plt.xlabel('Generation')
+    plt.ylabel('Fitness')
+    plt.legend()
+
     # Main loop for each generation in the genetic algorithm
     for i in range(numofgen):
         # Generate a new generation based on the current population
@@ -385,17 +397,33 @@ def run():
         # Append the best fitness value of the current generation to the cost list
         cost.append(min(fitness))
 
+        # Update the cost plot dynamically
+        cost_line.set_ydata(cost)  # Update y-data
+        cost_line.set_xdata(range(len(cost)))  # Update x-data
+        plt.xlim(0, len(cost))  # Adjust x-axis limits dynamically
+        plt.ylim(min(cost) - 1, max(cost) + 1)  # Adjust y-axis limits dynamically
+        plt.pause(0.1)  # Pause for a brief moment to refresh the plot
+
     # After all generations, select the elites (best individuals)
     elite()
 
     # Copy the best individual from the elites to the output list
     Output = copy.deepcopy(elites[0])
 
-    # Return the best individual and the best fitness value from the last generation
+    # Keep the final plot displayed
+    plt.ioff()
+
+
+    plt.ioff()
+
+    plot_map(Output, obstlist, numdrones, numtrackp, gridsize)  # Plot the final drone paths and obstacles
+
+    # Keep both figures open
+    plt.show(block=True)
     return Output, cost[-1]
+
 
 # Only run the following code when this file is executed directly
 if __name__ == "__main__":
-    Output, bestobjective = run()  # Run the genetic algorithm
-    plt.plot(cost)  # Plot the cost history over iterations
-    plot_map(Output, obstlist, numdrones, numtrackp, gridsize)  # Plot the final drone paths and obstacles
+    run()  # Run the genetic algorithm
+    

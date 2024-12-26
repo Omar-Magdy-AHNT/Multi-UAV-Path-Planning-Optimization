@@ -130,7 +130,17 @@ def SimulatedAnnealing():
     global tn
     global imax
     global alpha
-    
+    global cost
+
+    # Initialize plot for dynamic cost visualization
+    plt.figure("Simulated Annealing Cost")
+    plt.ion()  # Enable interactive mode for dynamic updates
+    cost_line, = plt.plot([], [], marker='o', label='Cost (Best Objective)', color='blue')
+    plt.title('Simulated Annealing Progress')
+    plt.xlabel('Iteration')
+    plt.ylabel('Cost')
+    plt.legend()
+
     current_solution = Output.copy()  # Work with a copy of the initial solution
     best_solution = current_solution.copy()  # Initialize the best solution
     current_objective = objective()  # Calculate initial objective
@@ -138,7 +148,6 @@ def SimulatedAnnealing():
     i = 0  # Initialize iteration counter
 
     while tn > tf and i < imax:  # Loop until temperature is low enough or max iterations reached
-
         for j in range(nt):  # Generate new solutions
             newsolution()  # Generate a new solution
             new_objective = objective()  # Calculate the new objective
@@ -164,12 +173,26 @@ def SimulatedAnnealing():
         print('Iteration:', i + 1)  # Print current iteration
         print('Temperature:', tn)  # Print current temperature
 
-        i += 1  # Increment iteration counter
+        # Update the cost list and the dynamic plot
         cost.append(best_objective)  # Store the best objective for this iteration
+        cost_line.set_xdata(range(len(cost)))  # Update x-data for the plot
+        cost_line.set_ydata(cost)  # Update y-data for the plot
+        plt.xlim(0, len(cost))  # Adjust x-axis limits dynamically
+        plt.ylim(min(cost) - 1, max(cost) + 1)  # Adjust y-axis limits dynamically
+        plt.pause(0.1)  # Pause to refresh the plot
+
         print('Best Objective:', best_objective)  # Print the best objective
         print('Best Solution:', best_solution)  # Print the best solution
+
+        i += 1  # Increment iteration counter
+
+    # Finalize the plot
+    plt.ioff()  # Turn off interactive mode
+
+
     # Return the best solution and its objective after all iterations
     return best_solution, best_objective
+
 
 
 # Function to plot the drone paths and obstacles in 3D
@@ -223,11 +246,10 @@ def run():
         for j in range(numtrackp):  # Iterate over each track point
             Droneinfo.append(Output[j +(numtrackp*i)])  # Add the current track point to Droneinfo
         Droneinfo.append(endpt)  # Add the end point to Droneinfo
-    return Droneinfo, bo
+    plot_map(Droneinfo, obstlist, numdrones, numtrackp, gridsize)  # Plot the final drone paths and obstacles
+    plt.show(block=True)
+
 
 # Only run the following code when this file is executed directly
 if __name__ == "__main__":
-    Droneinfo,BestObjective = run()
-    print(Droneinfo)
-    plt.plot(cost)  # Plot the cost history over iterations
-    plot_map(Droneinfo, obstlist, numdrones, numtrackp, gridsize)  # Plot the final drone paths and obstacles
+    run()

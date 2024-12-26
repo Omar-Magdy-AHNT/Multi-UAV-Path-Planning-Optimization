@@ -179,30 +179,61 @@ def plot_map(Droneinfo, obstlist, numdrones, numtrackp, gridsize):
 
     plt.legend()  # Display the legend
     plt.show()  # Show the plot
-    
+
+
 def run():
+    # Initialize the cost plot for dynamic visualization
+    plt.figure("Fitness Progress")
+    plt.ion()  # Enable interactive mode for dynamic updates
+    cost_line, = plt.plot([], [], marker='o', label='Best Fitness (Rank)', color='blue')  # Initialize the plot
+    plt.title('Fitness Progress During Run')
+    plt.xlabel('Iteration')
+    plt.ylabel('Best Fitness')
+    plt.legend()
+
     createobs(gridsize)  # Create obstacles in the simulation grid
     createmap()  # Create the map for drones, including start and end points
-    fitness()
-    cost.append(TopScore)
-    print("Best Rank: ", TopScore) # Print the best fitness value of the current generation
+    fitness()  # Initial fitness calculation
+    cost.append(TopScore)  # Append the first fitness score
+    print("Best Rank: ", TopScore)  # Print the best fitness value of the current generation
     print("Top Student: ", TopStudent)  # Print the best individual of the current generation
+
+    # Dynamic plot update
+    cost_line.set_xdata(range(len(cost)))  # Update x-data (iterations)
+    cost_line.set_ydata(cost)  # Update y-data (best fitness values)
+    plt.xlim(0, len(cost))  # Adjust x-axis limits
+    plt.ylim(min(cost) - 1, max(cost) + 1)  # Adjust y-axis limits dynamically
+    plt.pause(0.1)  # Pause to refresh the plot
+
     for i in range(schooldays):
         print("Iteration: ", i)
-        meanp()
-        teacher_phase()
-        fitness()
-        learner_phase()
-        fitness()
-        cost.append(TopScore)
-        print("Best Rank: ", TopScore) # Print the best fitness value of the current generation
-        print("Top Student: ", TopStudent)  # Print the best individual of the current generation
-    bestobjective = cost[-1]
-    Output = TopStudent
-    return Output, bestobjective
+        meanp()  # Phase to calculate the mean position
+        teacher_phase()  # Phase to update the teacher
+        fitness()  # Recalculate fitness after teacher phase
+        learner_phase()  # Phase to update the learner
+        fitness()  # Recalculate fitness after learner phase
+        cost.append(TopScore)  # Append the best fitness value of this iteration
+        print("Best Rank: ", TopScore)  # Print the best fitness value
+        print("Top Student: ", TopStudent)  # Print the best individual
+
+        # Update the plot dynamically during each iteration
+        cost_line.set_xdata(range(len(cost)))  # Update x-data for the plot
+        cost_line.set_ydata(cost)  # Update y-data for the plot
+        plt.xlim(0, len(cost))  # Adjust x-axis limits dynamically
+        plt.ylim(min(cost) - 1, max(cost) + 1)  # Adjust y-axis limits dynamically
+        plt.pause(0.1)  # Pause to refresh the plot
+
+    bestobjective = cost[-1]  # Get the final best fitness value
+    Output = TopStudent  # The best individual at the end of the process
+
+    # Finalize the plot after all iterations
+    plt.ioff()  # Disable interactive mode
+
+    plot_map(Output, obstlist, numdrones, numtrackp, gridsize)  # Plot the final drone paths and obstacles
+    
+    plt.show(block=True)
 
 # Only run the following code when this file is executed directly
 if __name__ == "__main__":
-    Output, bestobjective = run()  # Run the ant colony algorithm
-    plt.plot(cost)  # Plot the cost history over iterations
-    plot_map(Output, obstlist, numdrones, numtrackp, gridsize)  # Plot the final drone paths and obstacles
+    run()  # Run the TLBO algorithm
+

@@ -176,23 +176,57 @@ def run():
     global cost
     createobs(gridsize)
     createmap()
+
+    # Evaluate initial fitness
     PFittness()
     GFittness()
     cost.append(Global_Fitness)
     print("Best fitness value: ", Global_Fitness)  # Print the best fitness value of the current generation
     print("Best Bird: ", global_path)  # Print the best individual of the current generation
+
+    # Initialize the cost plot
+    plt.figure("Cost Minimization Curve")  # Name the figure for clarity
+    plt.ion()  # Enable interactive mode
+    cost_line, = plt.plot(cost, marker='o', label='Cost Curve', color='blue')  # Initialize the plot line
+    plt.title('Minimization Curve')
+    plt.xlabel('Iteration')
+    plt.ylabel('Fitness')
+    plt.legend()
+
+    # Main loop for each iteration
     for i in range(maxiter):
         print("Iteration: ", i)
+
+        # Generate a new solution
         newsol()
+
+        # Evaluate fitness
         PFittness()
         GFittness()
         print("Best fitness value: ", Global_Fitness)  # Print the best fitness value of the current generation
         print("Best Bird: ", global_path)  # Print the best individual of the current generation
+
+        # Append the current global fitness value to the cost list
         cost.append(Global_Fitness)
+
+        # Update the cost plot dynamically
+        cost_line.set_ydata(cost)  # Update y-data
+        cost_line.set_xdata(range(len(cost)))  # Update x-data
+        plt.xlim(0, len(cost))  # Adjust x-axis limits dynamically
+        plt.ylim(min(cost) - 1, max(cost) + 1)  # Adjust y-axis limits dynamically
+        plt.pause(0.1)  # Pause for a brief moment to refresh the plot
+
+    # Finalize the best solution
     BestBird = global_path.copy()
-    return BestBird, Global_Fitness
+
+    # Finalize and keep the cost plot open
+    plt.ioff()
+
+    plot_map(BestBird, obstlist, numdrones, numtrackp, gridsize)  # Call plot_map with the required arguments
+
+    # Keep both figures open
+    plt.show(block=True)
+
 
 if __name__ == "__main__":
-    Output, bestobjective = run()  # Run the PSO algorithm 
-    plt.plot(cost)  # Plot the cost history over iterations
-    plot_map(Output, obstlist, numdrones, numtrackp, gridsize)  # Plot the final drone paths and obstacles
+    run()  # Run the PSO algorithm 
