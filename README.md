@@ -26,3 +26,9 @@ Click on the links below to access the respective algorithm implementations:
 - [Genetic Algorithm (GA)](/GA/GA_Code.py)  
 - [Particle Swarm Optimization (PSO)](/PSO/PSO_Code.py)  
 - [Teaching-Learning-Based Optimization (TLBO)](/TLBO/TLBO_Code.py)  
+
+## License
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+This project is licensed under the MIT License — see the [LICENSE](./LICENSE) file for details.
